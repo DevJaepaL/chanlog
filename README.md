@@ -1,2 +1,2 @@
-# chanlog.co
+# jaechane
 My Blog with Next.Js
