@@ -1,2 +1,2 @@
-# jaechane
+# chanlog
 My Blog with Next.Js
