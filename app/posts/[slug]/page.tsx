@@ -33,7 +33,7 @@ export async function generateMetadata({
       description,
       type: "article",
       publishedTime,
-      url: `https://localhost/post/${slug}`,
+      url: `https://localhost/posts/${slug}`,
     },
   };
 }
@@ -50,7 +50,7 @@ const Post = ({ params }: { params: { slug: string } }) => {
         <h1 className="mb-1 text-3xl font-semibold">
           <Balancer>{post.title}</Balancer>
         </h1>
-        <h4 className="font-light text-gray-700 dark:text-gray-400">
+        <h4 className="font-light text-gray-700 ">
           {post.summary}
         </h4>
         <p>

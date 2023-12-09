@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: post.publishedAt,
   }));
 
-  const routes = ["", "/post", "/about"].map((route) => ({
+  const routes = ["", "/info", "/post"].map((route) => ({
     url: `https://localhost${route}`,
     lastModified: new Date().toISOString().split("T")[0],
   }));

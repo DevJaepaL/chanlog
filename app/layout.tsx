@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import type { Metadata } from "next";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
-import ThemeProviders from "@/components/providers";
 import { AnalyticsWrapper } from "@/components/analytics";
 
 const pretendard = localFont({
@@ -33,7 +32,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://localhost"),
   title: {
     default: "Chanlog",
-    template: "%s | Jaechan",
+    template: "%s | Chanlog",
   },
   description: "순간을 기록하며 생각을 남기는 블로그",
   openGraph: {
@@ -63,14 +62,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className={`${pretendard.variable} font-sans`}>
-      <body className="mx-2 flex flex-col bg-slate-50 antialiased transition-colors delay-75 dark:bg-slate-800">
-        <ThemeProviders>
+      <body className=" flex flex-col bg-white antialiased transition-colors delay-75">
           <Navbar />
           <main className="mx-auto mt-14 w-full max-w-3xl px-4">
             {children}
           </main>
           <Footer />
-        </ThemeProviders>
         <AnalyticsWrapper />
       </body>
     </html>

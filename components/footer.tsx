@@ -1,8 +1,7 @@
 function Footer() {
   return (
-    <footer className="mx-auto mt-auto flex w-full max-w-2xl items-center px-4">
-      <div className="mt-10 flex w-full flex-col items-center justify-center gap-4 py-6">
-        <p>© {new Date().getFullYear()} 이재찬 All Rights Reserved.</p>
+    <footer className="mx-auto mt-auto flex w-full max-w-full items-center px-4 bg-black text-white">
+      <div className="mt-2 flex w-full flex-col items-center justify-center gap-4 py-6">        
         <div className="flex gap-4">
           <a  href="https://github.com/devjaepal" 
               target="_blank"
@@ -26,6 +25,7 @@ function Footer() {
             Instagram
           </a>
         </div>
+        <p>© {new Date().getFullYear()} 이재찬 All Rights Reserved.</p>
       </div>
     </footer>
   );
