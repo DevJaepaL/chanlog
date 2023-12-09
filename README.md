@@ -1,6 +1,6 @@
 ## Chanlog
 
-[블로그는 여기에](https://chanlog.co)
+[블로그는 여기에](https://chanlog.vercel.app/)
 
 **Used**
 
