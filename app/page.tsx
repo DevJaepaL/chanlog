@@ -21,9 +21,6 @@ export default function Home() {
         </div>        
       </div>
       <p className="">
-            먼저, 블로그에 와주신 모든 분들을 환영합니다.<br/>
-            이곳을 만든 이유는 나만의 형태에 맞는 공간을 만들고 생각을 글로 정리하고 싶었어요.<br/>
-            주로 다룰 글은 기술적인 내용이며 공간이 다듬어지는데로 일기와 앨범도 다룰 예정이에요.
       </p>        
       <div className="w-[100%] my-[5%] border-[3px] border-black/40"></div>
       <section className="mb-10">

@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="mx-auto mt-auto flex w-full max-w-full items-center px-4 bg-black text-white">
+    <footer className="mx-auto mt-auto flex w-full max-w-full items-center px-4 bg-blue-950 text-white">
       <div className="mt-2 flex w-full flex-col items-center justify-center gap-4 py-6">        
         <div className="flex gap-4">
           <a  href="https://github.com/devjaepal" 
