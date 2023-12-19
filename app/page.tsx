@@ -17,7 +17,7 @@ export default function Home() {
         </div>
         <div className="max-w-lg leading-6">
           <p className="font-bold text-3xl">Jae Chan <span className="text-xs text-zinc-400">Back-End Developer</span></p>
-          <p className="mb-1 font-thin text-sm">블로그에 오신것을 환영해요.<br/>생각을 정리하고 순간을 잊지 않기위해 기록하려고 합니다.</p>
+          <p className="mb-1 font-thin text-sm">블로그에 오신것을 환영해요!<br/>생각을 정리하고 순간을 기록하려 합니다.</p>
         </div>        
       </div>
       <p className="">
