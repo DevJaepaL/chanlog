@@ -64,7 +64,7 @@ export default function RootLayout({
     <html lang="ko" className={`${pretendard.variable} font-sans`}>
       <body className=" flex flex-col bg-white antialiased transition-colors delay-75">
           <Navbar />
-          <main className="mx-auto mt-14 w-full max-w-3xl px-4">
+          <main className="mx-auto mt-14 mb-14 w-full max-w-3xl px-4">
             {children}
           </main>
           <Footer />

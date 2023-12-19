@@ -17,7 +17,7 @@ export default function Home() {
         </div>
         <div className="max-w-lg leading-6">
           <p className="font-bold text-3xl">Jae Chan <span className="text-xs text-zinc-400">Back-End Developer</span></p>
-          <p className="mb-1">생각을 정리하고 순간을 잊지 않도록 기록합니다.</p>          
+          <p className="mb-1 font-thin text-sm">블로그에 오신것을 환영해요.<br/>생각을 정리하고 순간을 잊지 않기위해 기록하려고 합니다.</p>
         </div>        
       </div>
       <p className="">
@@ -32,9 +32,9 @@ export default function Home() {
           return 1;
         })
         .map((post) => (
-          <article key={post.slug} className="mb-6 border-solid border-2 p-3">
+          <article key={post.slug} className="mb-6 border-solid border-2 p-3 rounded-lg border-slate-300">
             <Link href={`/posts/${post.slug}`}>
-              <h2 className="text-xl font-semibold">{post.title}</h2>
+              <h2 className="text-xl font-bold">{post.title}</h2>
               <h6 className="my-1 text-sm font-normal text-gray-400">
                 {post.summary}
               </h6>

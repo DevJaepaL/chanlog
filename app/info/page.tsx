@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function Info() {
   return (
-    <section className="break-keep">  
+    <section className="break-keep">      
       <section className="mb-10">
-      <div className="h-20 bg-gradient-to-r from-cyan-500 to-blue-500 mb-10"/>
+      <div className="h-20 bg-gradient-to-r from-cyan-500 to-blue-500 mb-10"/>      
         <h4 className="mb-6 text-2xl font-semibold">Career 💼</h4>
         <ul className="flex list-disc flex-col gap-1 px-4">
           <li>
@@ -21,7 +21,18 @@ export default function Info() {
             </div>
           </li>
         </ul>
-      </section>
+      </section>      
+      <section className="mb-10">    
+        <h4 className="mb-6 text-2xl font-semibold">Stack 👨‍💻</h4>
+        <ul className="flex list-disc flex-col gap-1 px-4">
+          <li>
+              <p className="text-sm">Java ☕ - JVM, 객체지향 개념과 몇가지의 디자인 패턴 이해, Spring 웹 프레임워크</p>
+          </li>
+          <li>
+              <p className="text-sm">Python 🐍 - 데이터 핸들링 및 전처리, 머신러닝 & LLM 기초 지식 이해</p>
+          </li>
+        </ul>
+      </section>      
       <section className="mb-10">
         <h4 className="mb-6 text-2xl font-semibold">Experience 🌠</h4>
         <ul className="flex list-disc flex-col gap-1 px-4">
@@ -47,8 +58,8 @@ export default function Info() {
               <span className="text-sm"> 2023. 03 ~ 06</span>
             </div>
           </li>
-        </ul>
-      </section>
+        </ul>        
+      </section>  
     </section>
   );
 }
