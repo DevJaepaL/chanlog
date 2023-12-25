@@ -48,7 +48,7 @@ const Post = ({ params }: { params: { slug: string } }) => {
   return (    
     <section>            
       <div className="mb-4">
-        <img src={post.thumbnail} className="mb-10 w-auto h-auto rounded-xl"></img>        
+        {/* <img src={post.thumbnail} className="mb-10 w-auto h-56 object-over rounded-xl"></img>         */}
         <p className="mb-1 text-4xl font-semibold">
           <Balancer>{post.title}</Balancer>
         </p>

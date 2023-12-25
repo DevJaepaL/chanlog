@@ -17,14 +17,14 @@ export default function Home() {
         </div>
         <div className="max-w-lg leading-6">
           <p className="font-bold text-3xl">Jae Chan <span className="text-xs text-zinc-400">Back-End Developer</span></p>
-          <p className="mb-1 font-thin text-sm">블로그에 오신것을 환영해요!<br/>생각을 정리하고 순간을 기록하려 합니다.</p>
+          <p className="mb-1 font-thin text-sm">블로그에 와주셔서 감사합니다.<br/>생각을 정리하고 순간을 기록합니다.</p>
         </div>        
       </div>
       <p className="">
       </p>        
       <div className="w-[100%] my-[5%] border-[3px] border-black/40"></div>
       <section className="mb-10">
-      <h1 className="mb-6 text-2xl font-bold">최근 작성한 글</h1>
+      <h1 className="mb-6 text-3xl font-bold">최근 작성한 글</h1>
       {allPosts
         .sort((a, b) => {
           if (new Date(a.publishedAt) > new Date(b.publishedAt)) return -1;
@@ -32,19 +32,22 @@ export default function Home() {
           return 1;
         })
         .map((post) => (
-          <article key={post.slug} className="mb-6 border-solid border-2 p-3 rounded-lg border-slate-300">
-            <Link href={`/posts/${post.slug}`}>
-              <h2 className="text-xl font-bold">{post.title}</h2>
-              <h6 className="my-1 text-sm font-normal text-gray-400">
-                {post.summary}
-              </h6>
-              <p>
-                <small className="mr-2">{post.publishedAt}</small>
-              </p>
-            </Link>
+          <article key={post.slug} className="mb-6">            
+            <Link href={`/posts/${post.slug}`} className="flex flex-row">
+              <img src={post.thumbnail} placeholder="blur" className="mr-4 w-80 h-40 object-cover border-solid border-3 rounded-lg"/>
+              <div className="flex flex-col justify-center">
+                <h2 className="text-2xl font-bold">{post.title}</h2>
+                <h6 className="my-1 text-sm font-normal text-gray-400">
+                  {post.summary}
+                </h6>
+                <p>
+                  <small className="mr-2">{post.publishedAt}</small>
+                </p>
+              </div>              
+            </Link>            
           </article>
         ))}
-      </section>          
-    </section>
+      </section>                      
+    </section>    
   );
 }

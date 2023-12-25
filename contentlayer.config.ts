@@ -33,6 +33,9 @@ export const Post = defineDocumentType(() => ({
     image: {
       type: "string",
     },
+    tag: {
+      type: "string"
+    },
     thumbnail: {
       type: "string",
     }
