@@ -28,7 +28,7 @@ function Navbar() {
   if (pathName?.includes("/posts/")) pathName = "/posts";
 
   return (
-    <nav className="h-16 w-full bg-blue-900 text-white">
+    <nav className="h-16 w-full bg-emerald-800 text-white">
       <div className="mx-auto flex h-full w-full max-w-3xl items-center justify-between px-4 py-4">
         <h2 className="text-lg- font-bold">        
           <Link href="/">CHANLOG</Link>

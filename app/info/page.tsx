@@ -11,7 +11,7 @@ export default function Info() {
   return (
     <section className="break-keep">      
       <section className="mb-10">
-      <div className="h-20 bg-gradient-to-r from-cyan-500 to-blue-500 mb-10"/>      
+      <div className="h-20 bg-gradient-to-r from-emerald-500 to-emerald-300 mb-10"/>      
         <h4 className="mb-6 text-2xl font-semibold">Career 💼</h4>
         <ul className="flex list-disc flex-col gap-1 px-4">
           <li>
