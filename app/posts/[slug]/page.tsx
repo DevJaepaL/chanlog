@@ -61,7 +61,7 @@ const Post = ({ params }: { params: { slug: string } }) => {
       </div>
       <div className="w-[90%] my-[5%] border-[1px] border-black/100"></div>
 
-      <Mdx code={post.body.code} />
+      <Mdx code={post.body.code}/>
     </section>
   );
 };

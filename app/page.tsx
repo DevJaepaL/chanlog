@@ -21,7 +21,7 @@ export default function Home() {
       </div>      
       <div className="w-[100%] my-[5%] border-[3px] border-black/40"></div>
       <section className="mb-10">
-      <h1 className="mb-6 text-3xl font-bold">최근 작성한 글</h1>
+      <h1 className="mb-6 text-2xl font-bold">최근 작성한 것들</h1>
       {allPosts
         .sort((a, b) => {
           if (new Date(a.publishedAt) > new Date(b.publishedAt)) return -1;
