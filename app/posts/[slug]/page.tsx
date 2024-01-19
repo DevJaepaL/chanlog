@@ -46,10 +46,10 @@ const Post = ({ params }: { params: { slug: string } }) => {
   }
 
   return (    
-    <section>            
-      <div className="mb-4">
+    <section className="text-stone-800">            
+      <div className="mb-4 text-stone-800">
         {/* <img src={post.thumbnail} className="mb-10 w-auto h-56 object-over rounded-xl"></img>         */}
-        <p className="mb-1 text-4xl font-semibold">
+        <p className="mb-1 text-2xl font-semibold text-stone-800">
           <Balancer>{post.title}</Balancer>
         </p>
         <h4 className="font-light text-gray-700 ">

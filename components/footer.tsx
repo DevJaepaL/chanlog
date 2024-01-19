@@ -1,7 +1,7 @@
 function Footer() {
   return (
-    <footer className="mx-auto mt-auto flex w-full max-w-full items-center px-4 bg-emerald-800 text-white">
-      <div className="mt-4 flex w-full flex-col items-center justify-center gap-4 py-6">        
+    <footer className="mx-auto mt-auto flex w-full max-w-full items-center px-4 bg-emerald-800 text-sm/[14px] text-white">
+      <div className="mt-2 flex w-full flex-col items-center justify-center gap-4 py-6">        
         <div className="flex gap-4">
           <a  href="https://github.com/devjaepal" 
               target="_blank"

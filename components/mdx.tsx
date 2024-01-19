@@ -35,7 +35,7 @@ export function Mdx({ code }: { code: string }) {
   const Component = useMDXComponent(code);
 
   return (
-    <article className="prose max-w-3xl break-keep dark:prose-invert prose-h1:text-2xl prose-a:break-all">
+    <article className="prose max-w-3xl break-keep dark:prose-invert prose-h1:text-2xl prose-a:break-all text-stone-800">
       <Component components={{ ...components }} />
     </article>
   );
