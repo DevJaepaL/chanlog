@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 function PostPage() {
   return (
     <section>
-      <h1 className="mb-6 text-2xl font-bold">무언가 <br /> 적습니다.</h1>
+      <h1 className="mb-6 text-2xl font-bold">무언가를<br /> 적습니다.</h1>
       <div className="w-[30%] my-[5%] border-[3px] border-black/40"></div>
       {allPosts
         /* 게시글 날짜 내림차순으로 정렬 */

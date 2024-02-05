@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 interface NavItem {
-  name: "홈"  | "소개"   | "블로그";
+  name: "홈"  | "소개"   | "기록";
   href: "/"  | "/info" | "/posts";
 }
 
@@ -18,7 +18,7 @@ const NAV_ITEMS: NavItem[] = [
     href: "/info"
   },
   {
-    name: "블로그",
+    name: "기록",
     href: "/posts",
   },
 ];

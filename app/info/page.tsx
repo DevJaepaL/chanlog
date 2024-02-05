@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import background from "app/bg.jpg"
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Info",
@@ -29,6 +28,7 @@ export default function Info() {
               <p className="text-sm">Python 🐍 - 데이터 핸들링 및 전처리, 머신러닝 & LLM 기초 지식 이해</p>
             </li>
           </ul>
+          <div className="w-[100%] my-[5%] border-[2px] border-black/60"></div>          
         </div>
       </div>
     </section>
