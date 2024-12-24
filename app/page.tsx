@@ -34,7 +34,7 @@ export default function Home() {
         .map((post) => (
           <article key={post.slug} className="mb-6">            
             <Link href={`/posts/${post.slug}`} className="flex flex-row">
-              <img src={post.thumbnail} placeholder="blur" className="mr-4 w-52 h-28 object-cover border-solid border-3 rounded-lg"/>
+              <img src={post.thumbnail} placeholder="blur" className="mr-4 w-64 h-40 object-cover border-solid border-3 rounded-lg"/>
               <div className="flex flex-col justify-center text-stone-900">
                 <h2 className="text-2xl font-bold">{post.title}</h2>
                 <h6 className="my-1 text-sm font-normal text-stone-700">
