@@ -18,8 +18,8 @@ export default function Home() {
         <div className="flex flex-col items-center my-3">
           <p className="font-bold text-3xl text-stone-800">Jae Chan</p>
           <p className=" mb-2 text-xs text-zinc-400">Back-End Developer</p>
-          <p className="mb-1 text-sm">바삐 흘러가는 중심에서</p>
-          <p className="mb-1 text-sm">순간을 기록하고자 노력합니다.</p>
+          {/* <p className="mb-1 text-sm">바삐 흘러가는 중심에서</p>
+          <p className="mb-1 text-sm">순간을 기록하고자 노력합니다.</p> */}
         </div>        
       </div>      
       <div className="w-[100%] my-[3%] border-[2px] border-black/60"></div>

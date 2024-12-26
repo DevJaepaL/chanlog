@@ -3,5 +3,6 @@
 import dockerPodmanMdx from './docker-podman.mdx.json' assert { type: 'json' }
 import myDiaryMdx from './my-diary.mdx.json' assert { type: 'json' }
 import myFirstPostMdx from './my-first-post.mdx.json' assert { type: 'json' }
+import pythonWrapperMdx from './python-wrapper.mdx.json' assert { type: 'json' }
 
-export const allPosts = [dockerPodmanMdx, myDiaryMdx, myFirstPostMdx]
+export const allPosts = [dockerPodmanMdx, myDiaryMdx, myFirstPostMdx, pythonWrapperMdx]

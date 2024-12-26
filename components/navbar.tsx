@@ -4,8 +4,10 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 interface NavItem {
-  name: "홈"  | "소개"   | "아카이브";
-  href: "/"  | "/info" | "/posts";
+  name: "홈"  | "아카이브";
+  href: "/"  | "/posts";
+  // name: "홈"  | "소개"   | "아카이브";
+  // href: "/"  | "/info" | "/posts";
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -13,10 +15,10 @@ const NAV_ITEMS: NavItem[] = [
     name: "홈",
     href: "/",
   },
-  {
-    name: "소개",
-    href: "/info"
-  },
+  // {
+  //   name: "소개",
+  //   href: "/info"
+  // },
   {
     name: "아카이브",
     href: "/posts",
