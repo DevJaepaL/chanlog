@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { AnalyticsWrapper } from "@/components/analytics";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const pretendard = localFont({
   src: [
@@ -69,6 +70,7 @@ export default function RootLayout({
           </main>
           <Footer />
         <AnalyticsWrapper />
+        <SpeedInsights />
       </body>
     </html>
   );
