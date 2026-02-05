@@ -1,4 +1,4 @@
-import { useMDXComponent } from "next-contentlayer/hooks";
+import { useMDXComponent } from "next-contentlayer2/hooks";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -35,7 +35,7 @@ export function Mdx({ code }: { code: string }) {
   const Component = useMDXComponent(code);
 
   return (
-    <article className="prose max-w-3xl break-keep dark:prose-invert prose-h1:text-2xl prose-a:break-all text-stone-800">
+    <article className="prose-sm sm:prose max-w-3xl break-keep dark:prose-invert prose-h1:text-xl sm:prose-h1:text-2xl prose-a:break-all text-stone-800">
       <Component components={{ ...components }} />
     </article>
   );
