@@ -138,8 +138,13 @@ pre code {
 .prose :where(th, td):not(:where([class~="not-prose"] *)) {
   border-right: 1px solid #e2e8f0;
   border-bottom: 1px solid #e2e8f0;
-  padding: 0.65rem 0.85rem;
+  padding: 0.65rem 0.95rem 0.65rem 1.05rem;
   vertical-align: top;
+}
+
+/* Override typography's first-column reset so left text does not stick to border */
+.prose table :is(th, td):first-child {
+  padding-left: 1.05rem !important;
 }
 
 .prose :where(th):not(:where([class~="not-prose"] *)) {
@@ -171,7 +176,11 @@ pre code {
   }
 
   .prose :where(th, td):not(:where([class~="not-prose"] *)) {
-    padding: 0.55rem 0.7rem;
+    padding: 0.55rem 0.75rem 0.55rem 0.9rem;
     border-color: #e2e8f0;
+  }
+
+  .prose table :is(th, td):first-child {
+    padding-left: 0.9rem !important;
   }
 }
