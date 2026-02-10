@@ -32,10 +32,17 @@ export default function Home() {
           return 1;
         })
         .map((post) => (
-          <article key={post.slug} className="mb-6">            
-            <Link href={`/posts/${post.slug}`} className="flex flex-row">
-              <img src={post.thumbnail} placeholder="blur" className="mr-4 w-52 h-28 object-cover border-solid border-3 rounded-lg"/>
-              <div className="flex flex-col justify-center text-stone-900">
+          <article key={post.slug} className="mb-6">
+            <Link
+              href={`/posts/${post.slug}`}
+              className="flex flex-col gap-3 sm:flex-row sm:gap-4"
+            >
+              <img
+                src={post.thumbnail}
+                placeholder="blur"
+                className="h-44 w-full rounded-lg border-2 border-solid object-cover sm:h-28 sm:w-52"
+              />
+              <div className="flex min-w-0 flex-col justify-center text-stone-900">
                 <h2 className="text-lg sm:text-2xl font-bold">{post.title}</h2>
                 <h6 className="my-1 text-sm font-normal text-stone-700">
                   {post.summary}

@@ -15,6 +15,7 @@ html {
 body {
   height: 100vh;
   min-height: -webkit-fill-available;
+  overflow-x: clip;
 }
 
 .prose .anchor {
@@ -52,6 +53,7 @@ body {
 pre {
   /* position: relative; */
   margin-top: 0 !important;
+  overflow-x: auto;
 }
 
 div[data-rehype-pretty-code-title] {
@@ -118,4 +120,31 @@ pre code {
 
 [data-rehype-pretty-code-fragment] .word-highlighted {
   @apply rounded-md bg-slate-300 bg-opacity-10 p-1;
+}
+
+.prose :where(table):not(:where([class~="not-prose"] *)) {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #94a3b8;
+  font-size: 0.875rem;
+}
+
+.prose :where(th, td):not(:where([class~="not-prose"] *)) {
+  border: 1px solid #94a3b8;
+  padding: 0.5rem 0.75rem;
+}
+
+.prose :where(th):not(:where([class~="not-prose"] *)) {
+  background-color: #f8fafc;
+  font-weight: 600;
+}
+
+@media (max-width: 639px) {
+  .prose :where(table):not(:where([class~="not-prose"] *)) {
+    border-color: #64748b;
+  }
+
+  .prose :where(th, td):not(:where([class~="not-prose"] *)) {
+    border-color: #64748b;
+  }
 }

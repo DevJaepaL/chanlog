@@ -63,7 +63,7 @@ const Post = ({ params }: { params: { slug: string } }) => {
             <small>{post.publishedAt}</small>{" "}
           </p>
         </div>
-        <div className="my-[5%] w-[90%] border-[1px] border-black/100"></div>
+        <div className="my-[5%] w-[100%] border-[1px] border-black/100"></div>
 
         <Mdx code={post.body.code} />
       </section>

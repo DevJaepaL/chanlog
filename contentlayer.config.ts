@@ -53,7 +53,7 @@ export default makeSource({
       [
         rehypePrettyCode,
         {
-          theme: "material-theme-palenight",
+          theme: "one-dark-pro",
           onVisitHighlightedLine(node: any) {
             node.properties.className.push("line-highlighted");
           },
