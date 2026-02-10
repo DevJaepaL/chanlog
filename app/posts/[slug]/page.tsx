@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { allPosts } from "contentlayer/generated";
 import Balancer from "react-wrap-balancer";
 import { Mdx } from "@/components/mdx";
-import Image from "next/image";
+import { PostToc } from "@/components/post-toc";
+import { extractToc } from "@/lib/toc";
 
 export async function generateStaticParams() {
   return allPosts.map((post) => ({
@@ -44,25 +45,29 @@ const Post = ({ params }: { params: { slug: string } }) => {
   if (!post) {
     return false;
   }
+  const toc = extractToc(post.body.raw);
 
-  return (    
-    <section className="text-stone-800">            
-      <div className="mb-4 text-stone-800">
-        {/* <img src={post.thumbnail} className="mb-10 w-auto h-56 object-over rounded-xl"></img>         */}
-        <p className="mb-1 text-xl sm:text-2xl font-semibold text-stone-800">
-          <Balancer>{post.title}</Balancer>
-        </p>
-        <h4 className="text-sm sm:text-base font-light text-gray-700 ">
-          {post.summary}
-        </h4>
-        <p>
-        <small>{post.publishedAt}</small>{" "}
-        </p>
-      </div>
-      <div className="w-[90%] my-[5%] border-[1px] border-black/100"></div>
+  return (
+    <>
+      <PostToc items={toc} title={post.title} />
+      <section className="text-stone-800">
+        <div className="mb-4 text-stone-800">
+          {/* <img src={post.thumbnail} className="mb-10 w-auto h-56 object-over rounded-xl"></img>         */}
+          <p className="mb-1 text-xl font-semibold text-stone-800 sm:text-2xl">
+            <Balancer>{post.title}</Balancer>
+          </p>
+          <h4 className="text-sm font-light text-gray-700 sm:text-base ">
+            {post.summary}
+          </h4>
+          <p>
+            <small>{post.publishedAt}</small>{" "}
+          </p>
+        </div>
+        <div className="my-[5%] w-[90%] border-[1px] border-black/100"></div>
 
-      <Mdx code={post.body.code}/>
-    </section>
+        <Mdx code={post.body.code} />
+      </section>
+    </>
   );
 };
 export default Post;

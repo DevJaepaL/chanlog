@@ -2,6 +2,7 @@
 
 import dockerPodmanMdx from './docker-podman.mdx.json' with { type: 'json' }
 import myFirstPostMdx from './my-first-post.mdx.json' with { type: 'json' }
+import omcIntroMdx from './omc-intro.mdx.json' with { type: 'json' }
 import pythonWrapperMdx from './python-wrapper.mdx.json' with { type: 'json' }
 
-export const allPosts = [dockerPodmanMdx, myFirstPostMdx, pythonWrapperMdx]
+export const allPosts = [dockerPodmanMdx, myFirstPostMdx, omcIntroMdx, pythonWrapperMdx]

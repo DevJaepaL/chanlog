@@ -45,6 +45,10 @@ body {
   @apply visible;
 }
 
+.prose :where(h2, h3, h4) {
+  scroll-margin-top: 6rem;
+}
+
 pre {
   /* position: relative; */
   margin-top: 0 !important;
