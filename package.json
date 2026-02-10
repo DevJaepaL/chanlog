@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@vercel/analytics": "^0.1.11",
+    "@vercel/speed-insights": "^1.3.1",
     "contentlayer2": "^0.5.8",
     "framer-motion": "^10.16.4",
     "github-slugger": "^2.0.0",
@@ -32,8 +33,14 @@
     "@types/node": "^20.11.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
+<<<<<<< HEAD
     "autoprefixer": "^10.4.24",
     "postcss": "^8.5.6",
+=======
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.57.0",
+    "postcss": "^8.4.23",
+>>>>>>> 7d227d31e3b8a187041326bcdba6110e515310c1
     "prettier": "^2.8.8",
     "prettier-plugin-tailwindcss": "^0.2.7",
     "tailwindcss": "^3.4.19",
