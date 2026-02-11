@@ -123,7 +123,8 @@ pre code {
 }
 
 .prose :where(table):not(:where([class~="not-prose"] *)) {
-  width: 100%;
+  width: auto;
+  max-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   border: 1px solid #cbd5e1;
@@ -168,9 +169,9 @@ pre code {
 
 @media (max-width: 639px) {
   .prose :where(table):not(:where([class~="not-prose"] *)) {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    display: table;
+    width: auto;
+    max-width: 100%;
     font-size: 0.82rem;
     border-color: #cbd5e1;
   }
