@@ -1,30 +1,28 @@
+import { contacts, profile } from "@/lib/profile";
+
 function Footer() {
   return (
-    <footer className="mx-auto mt-auto flex w-full max-w-full items-center px-4 bg-blue-950 text-sm/[14px] text-white">
-      <div className="mt-2 flex w-full flex-col items-center justify-center gap-4 py-6">        
-        <div className="flex gap-4">
-          <a  href="mailto:wocks3254@gamil.com"
+    <footer className="mt-auto w-full border-t border-hairline bg-canvas-soft">
+      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 px-6 py-10">
+        <div className="flex gap-5 text-caption">
+          {contacts.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:font-semibold transition-transform duration-1000">
-            Contact
-          </a>
-          <a  href="https://github.com/devjaepal" 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:font-semibold transition-transform duration-1000">
-            GitHub
-          </a>
-          <a  href="https://www.instagram.com/jaechane"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:font-semibold transition-transform duration-1000">
-            Instagram
-          </a>
+              className="text-ink-secondary transition-colors hover:text-primary"
+            >
+              {label}
+            </a>
+          ))}
         </div>
-        <p>© {new Date().getFullYear()} 이재찬 All Rights Reserved.</p>
+        <p className="text-caption text-ink-faint">
+          © {new Date().getFullYear()} {profile.name}. All Rights Reserved.
+        </p>
       </div>
     </footer>
   );
 }
+
 export default Footer;
