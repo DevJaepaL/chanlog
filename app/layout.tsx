@@ -1,45 +1,24 @@
 import "./globals.css";
-import localFont from "next/font/local";
 import type { Metadata } from "next";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { AnalyticsWrapper } from "@/components/analytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const pretendard = localFont({
-  src: [
-    {
-      path: "../public/fonts/Pretendard-Regular.woff2",
-      weight: "400",
-    },
-    {
-      path: "../public/fonts/Pretendard-SemiBold.woff2",
-      weight: "600",
-    },
-    {
-      path: "../public/fonts/Pretendard-Bold.woff2",
-      weight: "700",
-    },
-    {
-      path: "../public/fonts/Pretendard-Black.woff2",
-      weight: "900",
-    },
-  ],
-  variable: "--font-pretendard",
-  display: "swap",
-});
+const SITE_URL = "https://chanlog.blog";
+const SITE_DESCRIPTION = "서버·AI 데이터 파이프라인을 만드는 백엔드 개발자 이재찬입니다.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://localhost"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Chanlog",
+    default: "이재찬 | Backend & AI Engineer",
     template: "%s | Chanlog",
   },
-  description: "순간을 기록하며 생각을 남기는 블로그",
+  description: SITE_DESCRIPTION,
   openGraph: {
-    title: "Chanlog",
-    description: "순간을 기록하며 생각을 남기는 블로그",
-    url: "https://localhost",
+    title: "이재찬 | Backend & AI Engineer",
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
     locale: "ko_KR",
     type: "website",
     siteName: "Chanlog",
@@ -62,13 +41,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={`${pretendard.variable} font-sans`}>
-      <body className=" flex flex-col bg-white antialiased transition-colors delay-75">
-          <Navbar />
-          <main className="mx-auto mt-10 mb-10 w-full max-w-3xl px-4">
-            {children}
-          </main>
-          <Footer />
+    <html lang="ko" className="font-sans">
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/Pretendard-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/Pretendard-Bold.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+      </head>
+      <body className="flex min-h-screen flex-col bg-canvas-soft text-ink antialiased">
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        <Footer />
         <AnalyticsWrapper />
         <SpeedInsights />
       </body>
