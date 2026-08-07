@@ -39,7 +39,7 @@ export default function Home() {
             >
               <img
                 src={post.thumbnail}
-                placeholder="blur"
+                alt=""
                 className="h-44 w-full rounded-lg border-2 border-solid object-cover sm:h-28 sm:w-52"
               />
               <div className="flex min-w-0 flex-col justify-center text-stone-900">
