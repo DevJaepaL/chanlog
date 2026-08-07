@@ -17,7 +17,7 @@ export function Hero() {
           <h1 className="text-heading-1 text-surface sm:text-display-2">
             {profile.name}
           </h1>
-          <p className="text-body-md text-accent-sky">{profile.role}</p>
+          <p className="text-body-md text-surface/70">{profile.role}</p>
         </div>
         <p className="max-w-xl break-keep text-body-md text-surface/85">
           {profile.tagline}
