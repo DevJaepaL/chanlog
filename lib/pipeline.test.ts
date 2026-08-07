@@ -51,7 +51,9 @@ describe("demoDocuments", () => {
     }
   });
 
-  it("청크 문자 수가 선언된 범위 안에 있다", () => {
+  // CHUNK_MIN_CHARS는 하한이 아니라 목표 크기다. 내용이 짧은 단은 그대로 한 청크가
+  // 되므로 목표치보다 작을 수 있다. 반드시 지켜져야 하는 것은 상한뿐이다.
+  it("청크 문자 수가 상한을 넘지 않는다", () => {
     for (const doc of demoDocuments) {
       for (const chunk of doc.chunks) {
         expect(chunk.charCount).toBeGreaterThan(0);
