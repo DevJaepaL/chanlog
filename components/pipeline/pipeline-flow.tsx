@@ -18,7 +18,8 @@ export function PipelineFlow({ stages }: { stages: PipelineStage[] }) {
               <button
                 type="button"
                 onClick={() => setActiveId(stage.id)}
-                aria-pressed={isActive}
+                aria-current={isActive ? "step" : undefined}
+                aria-controls="pipeline-stage-detail"
                 className={`w-full rounded-lg border bg-surface p-4 text-left transition-shadow sm:w-[9.5rem] ${
                   isActive
                     ? "border-primary shadow-soft"
@@ -51,8 +52,12 @@ export function PipelineFlow({ stages }: { stages: PipelineStage[] }) {
       </ol>
 
       {active && (
-        <div className="rounded-lg border border-hairline bg-surface p-6">
-          <p className="mb-2 text-eyebrow uppercase text-primary">
+        <div
+          id="pipeline-stage-detail"
+          aria-live="polite"
+          className="rounded-lg border border-hairline bg-surface p-6"
+        >
+          <p className="mb-2 text-eyebrow uppercase text-ink-faint">
             {active.label}
           </p>
           <p className="break-keep text-body-sm text-ink-secondary">
