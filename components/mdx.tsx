@@ -35,8 +35,8 @@ export function Mdx({ code }: { code: string }) {
   const Component = useMDXComponent(code);
 
   return (
-    <article className="prose prose-sm max-w-none break-keep text-ink-secondary prose-headings:text-ink prose-a:text-primary sm:prose-base">
+    <div className="prose prose-sm max-w-none break-keep text-ink-secondary prose-headings:text-ink prose-a:text-primary-active sm:prose-base">
       <Component components={{ ...components }} />
-    </article>
+    </div>
   );
 }

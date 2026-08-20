@@ -32,9 +32,21 @@ describe("demoDocuments", () => {
     expect(demoDocuments.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("모든 문서에 출처가 명시되어 있다", () => {
+  it("모든 문서가 공개된 공식 HTTPS 출처로 추적된다", () => {
+    const officialHosts = new Set(["www.law.go.kr", "www.customs.go.kr"]);
+
     for (const doc of demoDocuments) {
-      expect(doc.source).toBeTruthy();
+      const attribution = [doc.source, doc.disclaimer].filter(Boolean).join(" ");
+
+      expect(doc.source.trim()).not.toBe("");
+      expect(attribution).not.toMatch(
+        /구조 설명용 예시 문서|실제 문서가 아니라/
+      );
+      expect(doc.sourceUrl).toMatch(/^https:\/\//);
+
+      const sourceUrl = new URL(doc.sourceUrl);
+      expect(sourceUrl.protocol).toBe("https:");
+      expect(officialHosts).toContain(sourceUrl.hostname);
     }
   });
 

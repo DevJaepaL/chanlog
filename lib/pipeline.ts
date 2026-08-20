@@ -31,6 +31,7 @@ export interface DemoDocument {
   id: string;
   label: string;
   source: string;
+  sourceUrl: string;
   disclaimer?: string;
   boundaryRules: string[];
   hierarchy: HierarchyNode[];
@@ -96,10 +97,11 @@ export const pipelineStages: PipelineStage[] = [
 export const demoDocuments: DemoDocument[] = [
   {
     id: "regulation",
-    label: "규정 · 지침",
-    source: "구조 설명용 예시 문서",
+    label: "법령",
+    source: "국가법령정보센터 「수도법 시행규칙」 [시행 2026. 3. 24.]",
+    sourceUrl: "https://www.law.go.kr/lsInfoP.do?lsId=007531",
     disclaimer:
-      "실제 문서가 아니라 장·조·항 계층 구조를 설명하기 위해 작성한 예시입니다.",
+      "공개 법령의 제1조 내용을 UI 시연에 맞게 축약·재구성했습니다.",
     boundaryRules: [
       "^제\\s*\\d+\\s*장",
       "^제\\s*\\d+\\s*조",
@@ -107,46 +109,24 @@ export const demoDocuments: DemoDocument[] = [
       "^\\s*\\d+\\.\\s",
     ],
     hierarchy: [
-      { id: "ch1", label: "제1장 총칙", level: 1 },
-      { id: "ch1-a1", label: "제1조 목적", level: 2, chunkId: "chunk_001" },
-      { id: "ch1-a2", label: "제2조 정의", level: 2, chunkId: "chunk_002" },
-      { id: "ch2", label: "제2장 시행규칙", level: 1 },
-      { id: "ch2-a3", label: "제3조 적용 범위", level: 2, chunkId: "chunk_003" },
-      { id: "ch2-a4", label: "제4조 검사 절차", level: 2, chunkId: "chunk_004" },
-      { id: "ch2-a4-c1", label: "① 검사 주기", level: 3 },
-      { id: "ch2-a4-c2", label: "② 예외 사유", level: 3 },
+      {
+        id: "water-rule",
+        label: "수도법 시행규칙 [시행 2026. 3. 24.]",
+        level: 1,
+      },
+      {
+        id: "water-rule-a1",
+        label: "제1조 목적",
+        level: 2,
+        chunkId: "chunk_001",
+      },
     ],
     chunks: [
       {
         id: "chunk_001",
-        path: "제1장 총칙 › 제1조 목적",
-        charCount: 2140,
-        text: "제1조(목적) 이 규정은 대상 업무의 처리 절차와 기준을 정하여 업무의 일관성과 효율을 확보하는 것을 목적으로 한다.",
-      },
-      {
-        id: "chunk_002",
-        path: "제1장 총칙 › 제2조 정의",
-        charCount: 2380,
-        text: "제2조(정의) 이 규정에서 사용하는 용어의 뜻은 다음과 같다.",
-      },
-      {
-        id: "chunk_003",
-        path: "제2장 시행규칙 › 제3조 적용 범위",
-        charCount: 1920,
-        text: "제3조(적용 범위) 이 규정은 별표에 정한 대상에 대하여 적용한다.",
-      },
-      {
-        id: "chunk_004",
-        path: "제2장 시행규칙 › 제4조 검사 절차",
-        charCount: 2840,
-        text: "제4조(검사 절차) ① 검사는 정해진 주기에 따라 실시한다. ② 다만 다음 각 호에 해당하는 경우에는 그러하지 아니하다.",
-      },
-      {
-        id: "chunk_005",
-        path: "제2장 시행규칙 › 제4조 검사 절차",
-        charCount: 1610,
-        text: "(이어짐) 검사 결과는 문서로 기록하여 보존하며, 필요한 경우 재검사를 실시할 수 있다.",
-        headerRepeated: true,
+        path: "수도법 시행규칙 › 제1조 목적",
+        charCount: 70,
+        text: "제1조(목적) 이 규칙은 「수도법」과 같은 법 시행령에서 위임된 사항과 그 시행에 필요한 사항을 정하는 것을 목적으로 합니다.",
       },
     ],
   },
@@ -154,6 +134,8 @@ export const demoDocuments: DemoDocument[] = [
     id: "press",
     label: "보도자료",
     source: "관세청 「2026년 7월 1일~7월 20일 수출입 현황」 (2026.7.21 배포)",
+    sourceUrl:
+      "https://www.customs.go.kr/kcs/na/ntt/selectNttInfo.do?nttSn=10170523&nttSnUrl=0cf5ecc6b10e0e5e7d8aed6856284263",
     boundaryRules: ["^\\s*<.+>\\s*$", "^\\s*ㅇ\\s", "^\\s*□\\s", "^\\s*-\\s"],
     hierarchy: [
       { id: "p-sum", label: "<요약>", level: 1, chunkId: "chunk_101" },

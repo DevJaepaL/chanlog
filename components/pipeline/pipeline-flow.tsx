@@ -34,7 +34,7 @@ export function PipelineFlow({ stages }: { stages: PipelineStage[] }) {
                 <span className="block text-body-sm font-semibold text-ink">
                   {stage.label}
                 </span>
-                <span className="mt-1 block text-caption text-ink-faint">
+                <span className="mt-1 block text-caption text-ink-muted">
                   {stage.caption}
                 </span>
               </button>
@@ -57,7 +57,7 @@ export function PipelineFlow({ stages }: { stages: PipelineStage[] }) {
           aria-live="polite"
           className="rounded-lg border border-hairline bg-surface p-6"
         >
-          <p className="mb-2 text-eyebrow uppercase text-ink-faint">
+          <p className="mb-2 text-eyebrow uppercase text-ink-muted">
             {active.label}
           </p>
           <p className="break-keep text-body-sm text-ink-secondary">

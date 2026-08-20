@@ -11,13 +11,13 @@ function Footer() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-ink-secondary transition-colors hover:text-primary"
+              className="text-ink-secondary transition-colors hover:text-primary-active"
             >
               {label}
             </a>
           ))}
         </div>
-        <p className="text-caption text-ink-faint">
+        <p className="text-caption text-ink-muted">
           © {new Date().getFullYear()} {profile.name}. All Rights Reserved.
         </p>
       </div>

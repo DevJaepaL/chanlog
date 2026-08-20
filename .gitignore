@@ -5,7 +5,7 @@
 /.pnp
 .pnp.js
 .omc
-.birthday-gf
+/birthday-gf/
 
 # testing
 /coverage

@@ -26,7 +26,7 @@
 디자인의 기준 문서는 `DESIGN.md`와 `docs/superpowers/specs/2026-08-07-portfolio-redesign-design.md`입니다.
 
 - 임의 색상·그림자·타이포그래피 대신 Tailwind 디자인 토큰만 사용합니다.
-- `primary`는 CTA·링크·포커스에만, `secondary`는 Hero에만 사용합니다.
+- `primary`는 CTA·링크·포커스·활성 선택 상태와 명시된 `badge-pill` 컴포넌트에만, `secondary`는 Hero에만 사용합니다.
 - `accent-*`는 칩의 점, 파이프라인 노드, 요소 분류에만 사용합니다.
 - 표면은 `bg-canvas-soft`, `bg-surface`, `border-hairline`으로 구분하고 그림자는 `shadow-soft` 또는 `shadow-elevated`만 사용합니다.
 - 타이포그래피 토큰을 사용하며 다크 모드는 지원하지 않습니다.

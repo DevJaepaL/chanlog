@@ -23,7 +23,7 @@ export function Section({ id, eyebrow, title, children, wide }: SectionProps) {
     >
       <div className={`mx-auto w-full ${wide ? "max-w-5xl" : "max-w-3xl"}`}>
         {eyebrow && (
-          <p className="mb-2 text-eyebrow uppercase text-ink-faint">{eyebrow}</p>
+          <p className="mb-2 text-eyebrow uppercase text-ink-muted">{eyebrow}</p>
         )}
         {title && (
           <h2 className="mb-8 text-heading-2 text-ink sm:text-heading-1">

@@ -43,7 +43,7 @@ const Post = ({ params }: { params: { slug: string } }) => {
       <PostToc items={toc} title={post.title} />
       <article className="mx-auto w-full max-w-3xl px-6 py-16">
         <header className="mb-8 border-b border-hairline pb-6">
-          <p className="text-caption text-ink-faint">{post.publishedAt}</p>
+          <p className="text-caption text-ink-muted">{post.publishedAt}</p>
           <h1 className="mt-2 break-keep text-heading-2 text-ink sm:text-heading-1">
             <Balancer>{post.title}</Balancer>
           </h1>

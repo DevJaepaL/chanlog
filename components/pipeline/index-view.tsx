@@ -8,7 +8,7 @@ export function IndexView() {
   return (
     <div className="flex flex-col gap-4">
       <div className="rounded-lg border border-hairline bg-surface p-6 shadow-soft">
-        <p className="mb-4 text-eyebrow uppercase text-ink-faint">담당 범위</p>
+        <p className="mb-4 text-eyebrow uppercase text-ink-muted">담당 범위</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {owned.map((target) => (
             <div key={target.id} className="rounded-md bg-canvas-soft p-4">
@@ -35,7 +35,7 @@ export function IndexView() {
           key={target.id}
           className="rounded-lg border border-dashed border-hairline bg-surface p-5 opacity-75"
         >
-          <p className="mb-2 text-eyebrow uppercase text-ink-faint">연동 범위</p>
+          <p className="mb-2 text-eyebrow uppercase text-ink-muted">연동 범위</p>
           <p className="break-keep text-body-sm text-ink-muted">
             {target.description}
           </p>

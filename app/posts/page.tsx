@@ -15,7 +15,7 @@ function PostPage() {
 
   return (
     <section className="mx-auto w-full max-w-3xl px-6 py-16">
-      <p className="mb-2 text-eyebrow uppercase text-ink-faint">Archive</p>
+      <p className="mb-2 text-eyebrow uppercase text-ink-muted">Archive</p>
       <h1 className="mb-8 text-heading-2 text-ink sm:text-heading-1">
         아카이브
       </h1>
@@ -26,7 +26,7 @@ function PostPage() {
             href={`/posts/${post.slug}`}
             className="group flex flex-col gap-1 rounded-lg border border-hairline bg-surface p-5 transition-shadow hover:shadow-soft"
           >
-            <p className="text-caption text-ink-faint">{post.publishedAt}</p>
+            <p className="text-caption text-ink-muted">{post.publishedAt}</p>
             <h2 className="break-keep text-title text-ink group-hover:text-primary">
               {post.title}
             </h2>

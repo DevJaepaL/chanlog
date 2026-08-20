@@ -8,7 +8,7 @@ export function SkillGroups() {
       <div className="flex flex-col gap-6">
         {skillGroups.map((group) => (
           <div key={group.category} className="flex flex-col gap-2">
-            <p className="text-eyebrow uppercase text-ink-faint">
+            <p className="text-eyebrow uppercase text-ink-muted">
               {group.category}
             </p>
             <div className="flex flex-wrap gap-2">

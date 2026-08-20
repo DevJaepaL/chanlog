@@ -15,17 +15,21 @@ export function ChunkingView({ documents }: { documents: DemoDocument[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2">
+      <div
+        className="flex flex-wrap gap-2"
+        role="group"
+        aria-label="데모 문서 선택"
+      >
         {documents.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setActiveId(item.id)}
-            aria-current={item.id === doc.id ? "true" : undefined}
+            aria-pressed={item.id === doc.id}
             aria-controls="chunking-doc-panel"
-            className={`rounded-full px-4 py-1.5 text-caption transition-colors ${
+            className={`rounded-full px-4 py-1.5 text-caption transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
               item.id === doc.id
-                ? "bg-secondary text-surface"
+                ? "bg-primary text-surface"
                 : "border border-hairline bg-surface text-ink-muted hover:text-ink"
             }`}
           >
@@ -40,7 +44,9 @@ export function ChunkingView({ documents }: { documents: DemoDocument[] }) {
         className="flex flex-col gap-4"
       >
         <div className="rounded-lg border border-hairline bg-surface p-6">
-          <p className="mb-3 text-eyebrow uppercase text-ink-faint">적용 경계 규칙</p>
+          <p className="mb-3 text-eyebrow uppercase text-ink-muted">
+            적용 경계 규칙
+          </p>
           <div className="flex flex-wrap gap-2">
             {doc.boundaryRules.map((rule) => (
               <code
@@ -51,7 +57,7 @@ export function ChunkingView({ documents }: { documents: DemoDocument[] }) {
               </code>
             ))}
           </div>
-          <p className="mt-4 break-keep text-caption text-ink-faint">
+          <p className="mt-4 break-keep text-caption text-ink-muted">
             고정 길이로 자르면 조문 중간이 끊깁니다. 계층 경계를 먼저 확정한 뒤 그 안에서만
             분할합니다. 목표 크기는 {CHUNK_MIN_CHARS.toLocaleString()}–
             {CHUNK_MAX_CHARS.toLocaleString()}자이며, 내용이 짧은 단은 그대로 한 청크가 되고
@@ -61,7 +67,9 @@ export function ChunkingView({ documents }: { documents: DemoDocument[] }) {
 
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[0.85fr_1.15fr]">
           <div className="rounded-lg border border-hairline bg-surface p-6">
-            <p className="mb-3 text-eyebrow uppercase text-ink-faint">인식된 계층</p>
+            <p className="mb-3 text-eyebrow uppercase text-ink-muted">
+              인식된 계층
+            </p>
             <ul className="flex flex-col gap-1">
               {doc.hierarchy.map((node) => (
                 <li
@@ -71,7 +79,7 @@ export function ChunkingView({ documents }: { documents: DemoDocument[] }) {
                       ? "text-body-sm font-semibold text-ink"
                       : node.level === 2
                         ? "ml-3 border-l border-hairline pl-3 text-body-sm text-ink-secondary"
-                        : "ml-6 border-l border-hairline pl-3 text-caption text-ink-faint"
+                        : "ml-6 border-l border-hairline pl-3 text-caption text-ink-muted"
                   }
                 >
                   {node.label}
@@ -81,7 +89,9 @@ export function ChunkingView({ documents }: { documents: DemoDocument[] }) {
           </div>
 
           <div className="rounded-lg border border-hairline bg-surface p-6">
-            <p className="mb-3 text-eyebrow uppercase text-ink-faint">생성된 청크</p>
+            <p className="mb-3 text-eyebrow uppercase text-ink-muted">
+              생성된 청크
+            </p>
             <ul className="flex flex-col gap-3">
               {doc.chunks.map((chunk) => (
                 <li
@@ -89,17 +99,17 @@ export function ChunkingView({ documents }: { documents: DemoDocument[] }) {
                   className="rounded-r-md border-l-[3px] border-accent-teal bg-canvas-soft px-4 py-3"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-caption font-semibold text-accent-teal">
+                    <span className="text-caption font-semibold text-ink-secondary">
                       {chunk.id}
                     </span>
-                    <span className="text-caption text-ink-faint">
+                    <span className="text-caption text-ink-muted">
                       {chunk.charCount.toLocaleString()}자
                     </span>
                   </div>
-                  <p className="mt-1 text-caption text-ink-faint">
+                  <p className="mt-1 text-caption text-ink-muted">
                     {chunk.path}
                     {chunk.headerRepeated && (
-                      <span className="ml-2 text-accent-orange">(헤더 유지)</span>
+                      <span className="ml-2 text-ink-muted">(헤더 유지)</span>
                     )}
                   </p>
                   <p className="mt-2 break-keep text-body-sm text-ink-secondary">
@@ -111,8 +121,18 @@ export function ChunkingView({ documents }: { documents: DemoDocument[] }) {
           </div>
         </div>
 
-        <p className="text-caption text-ink-faint">
-          출처: {doc.source}
+        <p className="text-caption text-ink-muted">
+          출처:{" "}
+          <a
+            href={doc.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${doc.source} 원문 새 창에서 열기`}
+            className="text-primary-active underline decoration-primary underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            {doc.source}
+            <span aria-hidden="true"> ↗</span>
+          </a>
           {doc.disclaimer ? ` — ${doc.disclaimer}` : ""}
         </p>
       </div>

@@ -12,13 +12,13 @@ export function ProjectList() {
               <h3 className="break-keep text-heading-3 text-ink">
                 {project.title}
               </h3>
-              <p className="text-caption text-ink-faint">
+              <p className="text-caption text-ink-muted">
                 {project.org}
                 {project.client ? ` · ${project.client}` : ""} | {project.period}
               </p>
             </div>
             <p className="mt-3 break-keep text-body-sm text-ink-secondary">
-              <span className="text-ink-faint">주요 역할</span> {project.role}
+              <span className="text-ink-muted">주요 역할</span> {project.role}
             </p>
             <ul className="mt-2 flex flex-col gap-1">
               {project.experience.map((item) => (

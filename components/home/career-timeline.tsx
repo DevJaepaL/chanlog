@@ -13,7 +13,7 @@ export function CareerTimeline() {
             }`}
           >
             <span className="absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full bg-ink-faint" />
-            <p className="text-caption text-ink-faint">{career.period}</p>
+            <p className="text-caption text-ink-muted">{career.period}</p>
             <h3 className="mt-1 text-heading-3 text-ink">{career.company}</h3>
             <p className="mt-1 text-body-sm text-ink-muted">
               {career.team ? `${career.team} · ` : ""}

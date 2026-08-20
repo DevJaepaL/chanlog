@@ -19,7 +19,7 @@ export function RecentPosts() {
             href={`/posts/${post.slug}`}
             className="group flex flex-col gap-1 rounded-lg border border-hairline bg-surface p-5 transition-shadow hover:shadow-soft"
           >
-            <p className="text-caption text-ink-faint">{post.publishedAt}</p>
+            <p className="text-caption text-ink-muted">{post.publishedAt}</p>
             <h3 className="break-keep text-title text-ink group-hover:text-primary">
               {post.title}
             </h3>
@@ -31,7 +31,8 @@ export function RecentPosts() {
       </div>
       <Link
         href="/posts"
-        className="mt-6 inline-block text-body-sm text-primary hover:underline"
+        aria-label="글 아카이브 전체 보기"
+        className="mt-6 inline-block text-body-sm text-primary-active hover:underline"
       >
         전체 보기 →
       </Link>

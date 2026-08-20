@@ -140,7 +140,7 @@ pre code {
   width: 1rem;
   margin-right: 1rem;
   text-align: right;
-  @apply text-ink-faint;
+  @apply text-ink-muted;
 }
 
 [data-rehype-pretty-code-fragment] .line-highlighted {
