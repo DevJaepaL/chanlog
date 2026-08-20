@@ -33,7 +33,11 @@ describe("demoDocuments", () => {
   });
 
   it("모든 문서가 공개된 공식 HTTPS 출처로 추적된다", () => {
-    const officialHosts = new Set(["www.law.go.kr", "www.customs.go.kr"]);
+    const officialHosts = new Set([
+      "law.go.kr",
+      "www.law.go.kr",
+      "www.customs.go.kr",
+    ]);
 
     for (const doc of demoDocuments) {
       const attribution = [doc.source, doc.disclaimer].filter(Boolean).join(" ");
@@ -48,6 +52,17 @@ describe("demoDocuments", () => {
       expect(sourceUrl.protocol).toBe("https:");
       expect(officialHosts).toContain(sourceUrl.hostname);
     }
+  });
+
+  it("법령 데모의 표시 시행일과 버전 고정 URL이 일치한다", () => {
+    const regulation = demoDocuments.find((doc) => doc.id === "regulation");
+
+    expect(regulation).toBeDefined();
+    expect(regulation?.source).toContain("[시행 2026. 3. 24.]");
+
+    const sourceUrl = new URL(regulation?.sourceUrl ?? "");
+    expect(sourceUrl.searchParams.get("efYd")).toBe("20260324");
+    expect(sourceUrl.searchParams.get("lsiSeq")).toBe("285093");
   });
 
   it("모든 문서에 경계 규칙이 있다", () => {

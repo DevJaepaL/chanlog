@@ -99,7 +99,8 @@ export const demoDocuments: DemoDocument[] = [
     id: "regulation",
     label: "법령",
     source: "국가법령정보센터 「수도법 시행규칙」 [시행 2026. 3. 24.]",
-    sourceUrl: "https://www.law.go.kr/lsInfoP.do?lsId=007531",
+    sourceUrl:
+      "https://law.go.kr/LSW/lsInfoP.do?ancYnChk=0&chrClsCd=010202&efYd=20260324&lsiSeq=285093&urlMode=lsInfoP",
     disclaimer:
       "공개 법령의 제1조 내용을 UI 시연에 맞게 축약·재구성했습니다.",
     boundaryRules: [
