@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { allPosts } from "contentlayer/generated";
 import Balancer from "react-wrap-balancer";
 import { Mdx } from "@/components/mdx";
@@ -6,9 +7,7 @@ import { PostToc } from "@/components/post-toc";
 import { extractToc } from "@/lib/toc";
 
 export async function generateStaticParams() {
-  return allPosts.map((post) => ({
-    slug: post.slug,
-  }));
+  return allPosts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({
@@ -16,16 +15,10 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }): Promise<Metadata | undefined> {
-  const post = allPosts.find((post) => post.slug === params.slug);
-  if (!post) {
-    return;
-  }
-  const {
-    title,
-    publishedAt: publishedTime,
-    summary: description,
-    slug,
-  } = post;
+  const post = allPosts.find((item) => item.slug === params.slug);
+  if (!post) return;
+
+  const { title, publishedAt: publishedTime, summary: description, slug } = post;
 
   return {
     title,
@@ -35,38 +28,31 @@ export async function generateMetadata({
       description,
       type: "article",
       publishedTime,
-      url: `https://localhost/posts/${slug}`,
+      url: `https://chanlog.blog/posts/${slug}`,
     },
   };
 }
 
 const Post = ({ params }: { params: { slug: string } }) => {
-  const post = allPosts.find((post) => post.slug === params.slug);
-  if (!post) {
-    return false;
-  }
+  const post = allPosts.find((item) => item.slug === params.slug);
+  if (!post) notFound();
   const toc = extractToc(post.body.raw);
 
   return (
     <>
       <PostToc items={toc} title={post.title} />
-      <section className="text-stone-800">
-        <div className="mb-4 text-stone-800">
-          {/* <img src={post.thumbnail} className="mb-10 w-auto h-56 object-over rounded-xl"></img>         */}
-          <p className="mb-1 text-xl font-semibold text-stone-800 sm:text-2xl">
+      <article className="mx-auto w-full max-w-3xl px-6 py-16">
+        <header className="mb-8 border-b border-hairline pb-6">
+          <p className="text-caption text-ink-faint">{post.publishedAt}</p>
+          <h1 className="mt-2 break-keep text-heading-2 text-ink sm:text-heading-1">
             <Balancer>{post.title}</Balancer>
-          </p>
-          <h4 className="text-sm font-light text-gray-700 sm:text-base ">
+          </h1>
+          <p className="mt-2 break-keep text-body-md text-ink-muted">
             {post.summary}
-          </h4>
-          <p>
-            <small>{post.publishedAt}</small>{" "}
           </p>
-        </div>
-        <div className="my-[5%] w-[100%] border-[1px] border-black/100"></div>
-
+        </header>
         <Mdx code={post.body.code} />
-      </section>
+      </article>
     </>
   );
 };

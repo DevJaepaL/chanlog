@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { allPosts } from "contentlayer/generated";
 import Link from "next/link";
+import { allPosts } from "contentlayer/generated";
 
 export const metadata: Metadata = {
   title: "Archive",
@@ -8,29 +8,34 @@ export const metadata: Metadata = {
 };
 
 function PostPage() {
+  const posts = [...allPosts].sort(
+    (a, b) =>
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  );
+
   return (
-    <section>
-      <h1 className="mb-6 text-xl sm:text-2xl font-bold">아카이브</h1>
-      <div className="w-[30%] my-[5%] border-[3px] border-black/40"></div>
-      {allPosts
-        /* 게시글 날짜 내림차순으로 정렬 */
-        .sort((a, b) => {
-          if (new Date(a.publishedAt) > new Date(b.publishedAt)) return -1;
-          return 1;
-        })
-        .map((post) => (
-          <article key={post.slug} className="mb-6">
-            <Link href={`/posts/${post.slug}`}>
-              <h2 className="text-lg sm:text-xl font-semibold">{post.title}</h2>
-              <h6 className="my-1 text-sm font-normal text-gray-400">
-                {post.summary}
-              </h6>
-              <p>
-                <small className="mr-2">{post.publishedAt}</small>
-              </p>
-            </Link>
-          </article>
+    <section className="mx-auto w-full max-w-3xl px-6 py-16">
+      <p className="mb-2 text-eyebrow uppercase text-ink-faint">Archive</p>
+      <h1 className="mb-8 text-heading-2 text-ink sm:text-heading-1">
+        아카이브
+      </h1>
+      <div className="flex flex-col gap-4">
+        {posts.map((post) => (
+          <Link
+            key={post.slug}
+            href={`/posts/${post.slug}`}
+            className="group flex flex-col gap-1 rounded-lg border border-hairline bg-surface p-5 transition-shadow hover:shadow-soft"
+          >
+            <p className="text-caption text-ink-faint">{post.publishedAt}</p>
+            <h2 className="break-keep text-title text-ink group-hover:text-primary">
+              {post.title}
+            </h2>
+            <p className="break-keep text-body-sm text-ink-muted">
+              {post.summary}
+            </p>
+          </Link>
         ))}
+      </div>
     </section>
   );
 }
