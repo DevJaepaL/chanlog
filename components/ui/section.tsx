@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
 interface SectionProps {
@@ -12,12 +12,10 @@ interface SectionProps {
 }
 
 export function Section({ id, eyebrow, title, children, wide }: SectionProps) {
-  const reduceMotion = useReducedMotion();
-
   return (
     <motion.section
       id={id}
-      initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.4, ease: "easeOut" }}

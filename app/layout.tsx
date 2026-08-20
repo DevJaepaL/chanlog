@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import { AnalyticsWrapper } from "@/components/analytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { MotionProvider } from "@/components/ui/motion-provider";
 
 const SITE_URL = "https://chanlog.blog";
 const SITE_DESCRIPTION = "서버·AI 데이터 파이프라인을 만드는 백엔드 개발자 이재찬입니다.";
@@ -60,7 +61,9 @@ export default function RootLayout({
       </head>
       <body className="flex min-h-screen flex-col bg-canvas-soft text-ink antialiased">
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          <MotionProvider>{children}</MotionProvider>
+        </main>
         <Footer />
         <AnalyticsWrapper />
         <SpeedInsights />
