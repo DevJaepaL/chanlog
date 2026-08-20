@@ -20,10 +20,10 @@ export function PipelineFlow({ stages }: { stages: PipelineStage[] }) {
                 onClick={() => setActiveId(stage.id)}
                 aria-current={isActive ? "step" : undefined}
                 aria-controls="pipeline-stage-detail"
-                className={`w-full rounded-lg border bg-surface p-4 text-left transition-shadow sm:w-[9.5rem] ${
+                className={`w-full rounded-lg border bg-surface p-4 text-left sm:w-[9.5rem] ${
                   isActive
                     ? "border-primary shadow-soft"
-                    : "border-hairline hover:shadow-soft"
+                    : "border-hairline"
                 }`}
               >
                 <span
