@@ -30,7 +30,7 @@
 - `accent-*`는 칩의 점, 파이프라인 노드, 요소 분류에만 사용합니다.
 - 표면은 `bg-canvas-soft`, `bg-surface`, `border-hairline`으로 구분하고 그림자는 `shadow-soft` 또는 `shadow-elevated`만 사용합니다.
 - 타이포그래피 토큰을 사용하며 다크 모드는 지원하지 않습니다.
-- 애니메이션은 섹션 진입 fade-up만 허용하고, reduced motion 환경을 존중합니다.
+- Framer Motion/페이지 애니메이션은 Section 진입 fade-up만 허용하고 reduced motion 환경을 존중합니다. CSS hover·focus 상호작용 피드백은 허용합니다.
 
 글꼴 스택은 정확히 `'SF Pro Display', 'SF Pro Text', 'PretendardLocal', sans-serif`입니다. `PretendardLocal`은 안정적인 패밀리명을 유지해야 하므로 `next/font/local` 대신 `@font-face`로 선언합니다.
 
