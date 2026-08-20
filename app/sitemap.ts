@@ -1,14 +1,16 @@
 import { allPosts } from "contentlayer/generated";
 import type { MetadataRoute } from "next";
 
+const SITE_URL = "https://chanlog.blog";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = allPosts.map((post) => ({
-    url: `https://chanlog.blog/post/${post.slug}`,
+    url: `${SITE_URL}/posts/${post.slug}`,
     lastModified: post.publishedAt,
   }));
 
-  const routes = ["", "/info", "/posts"].map((route) => ({
-    url: `https://chanlog.blog${route}`,
+  const routes = ["", "/posts"].map((route) => ({
+    url: `${SITE_URL}${route}`,
     lastModified: new Date().toISOString().split("T")[0],
   }));
 
