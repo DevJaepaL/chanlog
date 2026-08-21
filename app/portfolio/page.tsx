@@ -3,6 +3,7 @@ import { CareerTimeline } from "@/components/home/career-timeline";
 import { Hero } from "@/components/home/hero";
 import { ProjectList } from "@/components/home/project-list";
 import { SkillGroups } from "@/components/home/skill-groups";
+import { DocumentPreprocessorSection } from "@/components/portfolio/document-preprocessor-section";
 import { createLandingMetadata } from "@/lib/metadata";
 
 export const metadata = createLandingMetadata({
@@ -18,6 +19,7 @@ export default function PortfolioPage() {
       <About />
       <CareerTimeline />
       <ProjectList />
+      <DocumentPreprocessorSection />
       <SkillGroups />
     </>
   );
