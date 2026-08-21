@@ -7,19 +7,20 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MotionProvider } from "@/components/ui/motion-provider";
 
 const SITE_URL = "https://chanlog.blog";
-const SITE_DESCRIPTION = "서버·AI 데이터 파이프라인을 만드는 백엔드 개발자 이재찬입니다.";
+const SITE_TITLE = "CHANLOG | 기술 아카이브";
+const SITE_DESCRIPTION = "백엔드·AI·데이터 파이프라인에 관한 이재찬의 기술 아카이브.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "이재찬 | Backend & AI Engineer",
+    default: SITE_TITLE,
     template: "%s | Chanlog",
   },
   description: SITE_DESCRIPTION,
   openGraph: {
-    title: "이재찬 | Backend & AI Engineer",
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    url: SITE_URL,
+    url: `${SITE_URL}/`,
     locale: "ko_KR",
     type: "website",
     siteName: "Chanlog",
