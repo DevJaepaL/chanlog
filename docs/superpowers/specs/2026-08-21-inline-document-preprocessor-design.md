@@ -125,9 +125,9 @@ header, sitemap, canonical 및 어떤 랜딩 메타데이터에도 남기지 않
 
 ## 7. 접근성
 
-- 접기 action과 네 원본 영역 및 네 결과 행은 실제 `button`으로 구현하고, 보이는
+- 접기 action, 네 원본 marker, 네 결과 action은 실제 `button`으로 구현하고, 보이는
   `focus-visible` 링과 44px 이상의 실용적인 터치 대상을 제공한다.
-- 원본 영역과 결과 action의 접근 가능한 이름은 각각 `문서 제목 선택`, `요약 선택`,
+- 원본 marker와 결과 action의 접근 가능한 이름은 각각 `문서 제목 선택`, `요약 선택`,
   `표 선택`, `차트 선택`이다. 현재 고정된 항목에는 `aria-pressed="true"`를 설정한다.
 - 결과 영역에는 heading, 목록, table, figure/figcaption을 의미에 맞게 사용한다. 장식 가이드와
   색상 swatch는 `aria-hidden`이다.

@@ -166,6 +166,50 @@ describe("documentPreprocessorDemo", () => {
     ]);
   });
 
+  it("keeps numbered marker centers inside their regions and 44px targets apart", () => {
+    expect(
+      documentPreprocessorDemo.regions.map((region) => region.marker.number)
+    ).toEqual(["1", "2", "3", "4"]);
+
+    for (const region of documentPreprocessorDemo.regions) {
+      expect(region.marker.point.x).toBeGreaterThanOrEqual(region.rect.x);
+      expect(region.marker.point.x).toBeLessThanOrEqual(
+        region.rect.x + region.rect.width
+      );
+      expect(region.marker.point.y).toBeGreaterThanOrEqual(region.rect.y);
+      expect(region.marker.point.y).toBeLessThanOrEqual(
+        region.rect.y + region.rect.height
+      );
+    }
+
+    for (const preview of [
+      { width: 190, height: 269 },
+      { width: 450, height: 636 },
+    ]) {
+      const bounds = documentPreprocessorDemo.regions.map((region) =>
+        getDocumentRegionMarkerBounds(region, preview)
+      );
+      for (const bound of bounds) {
+        expect(bound.left).toBeGreaterThanOrEqual(0);
+        expect(bound.top).toBeGreaterThanOrEqual(0);
+        expect(bound.right).toBeLessThanOrEqual(preview.width);
+        expect(bound.bottom).toBeLessThanOrEqual(preview.height);
+      }
+      for (let first = 0; first < bounds.length; first += 1) {
+        for (let second = first + 1; second < bounds.length; second += 1) {
+          const a = bounds[first];
+          const b = bounds[second];
+          expect(
+            a.left < b.right &&
+              a.right > b.left &&
+              a.top < b.bottom &&
+              a.bottom > b.top
+          ).toBe(false);
+        }
+      }
+    }
+  });
+
   it("references the single deterministic full-page WebP derivative", () => {
     expect(documentPreprocessorDemo.image).toEqual({
       src: "/images/document-preprocessor/customs-2026-07-page-1.webp",
