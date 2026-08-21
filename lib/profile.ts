@@ -143,7 +143,7 @@ export const skillGroups: SkillGroup[] = [
 ];
 
 export const contacts: ContactLink[] = [
-  { label: "Email", href: "mailto:wocks3254@gmail.com" },
+  { label: "Contact", href: "mailto:wocks3254@gmail.com" },
   { label: "GitHub", href: "https://github.com/DevJaepaL" },
   { label: "Instagram", href: "https://www.instagram.com/jaechane" },
 ];

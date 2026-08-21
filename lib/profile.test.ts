@@ -59,4 +59,14 @@ describe("profile 데이터", () => {
       expect(contact.href).toMatch(/^(mailto:|https:\/\/)/);
     }
   });
+
+  it("renames Email to Contact while preserving the shared mailto destination", () => {
+    expect(contacts.map((contact) => contact.label)).toEqual([
+      "Contact", "GitHub", "Instagram",
+    ]);
+    expect(contacts[0]).toEqual({
+      label: "Contact",
+      href: "mailto:wocks3254@gmail.com",
+    });
+  });
 });
