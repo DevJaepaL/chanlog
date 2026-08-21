@@ -4,7 +4,9 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   documentPreprocessorDemo,
+  getActiveDocumentRegion,
   getDocumentPreprocessorState,
+  getDocumentRegionMarkerBounds,
   reduceDocumentPreprocessorState,
   type DocumentRegionId,
 } from "@/lib/document-preprocessor";
@@ -41,16 +43,15 @@ describe("documentPreprocessorDemo", () => {
     );
 
     const ids = documentPreprocessorDemo.regions.map((region) => region.id);
-    const labels = documentPreprocessorDemo.regions.map((region) => region.label);
+    const labels = documentPreprocessorDemo.regions.map(
+      (region) => region.label
+    );
     expect(ids).toEqual(REGION_IDS);
     expect(new Set(ids).size).toBe(4);
     expect(new Set(labels).size).toBe(4);
-    expect(documentPreprocessorDemo.regions.map((region) => region.accessibleName)).toEqual([
-      "문서 제목 선택",
-      "요약 선택",
-      "표 선택",
-      "차트 선택",
-    ]);
+    expect(
+      documentPreprocessorDemo.regions.map((region) => region.accessibleName)
+    ).toEqual(["문서 제목 선택", "요약 선택", "표 선택", "차트 선택"]);
 
     for (const region of documentPreprocessorDemo.regions) {
       for (const value of Object.values(region.rect)) {
@@ -71,7 +72,9 @@ describe("documentPreprocessorDemo", () => {
   });
 
   it("contains the exact semantic results", () => {
-    expect(documentPreprocessorDemo.regions.map((region) => region.result)).toEqual([
+    expect(
+      documentPreprocessorDemo.regions.map((region) => region.result)
+    ).toEqual([
       { kind: "text", lines: ["2026년 7월 수출입 현황 [확정치]"] },
       {
         kind: "list",
@@ -91,6 +94,50 @@ describe("documentPreprocessorDemo", () => {
       },
       { kind: "figure", label: "월별 수출입 현황", caption: "수출입 추이" },
     ]);
+  });
+
+  it("keeps numbered marker centers inside their regions and 44px targets apart", () => {
+    expect(
+      documentPreprocessorDemo.regions.map((region) => region.marker.number)
+    ).toEqual(["1", "2", "3", "4"]);
+
+    for (const region of documentPreprocessorDemo.regions) {
+      expect(region.marker.point.x).toBeGreaterThanOrEqual(region.rect.x);
+      expect(region.marker.point.x).toBeLessThanOrEqual(
+        region.rect.x + region.rect.width
+      );
+      expect(region.marker.point.y).toBeGreaterThanOrEqual(region.rect.y);
+      expect(region.marker.point.y).toBeLessThanOrEqual(
+        region.rect.y + region.rect.height
+      );
+    }
+
+    for (const preview of [
+      { width: 190, height: 269 },
+      { width: 450, height: 636 },
+    ]) {
+      const bounds = documentPreprocessorDemo.regions.map((region) =>
+        getDocumentRegionMarkerBounds(region, preview)
+      );
+      for (const bound of bounds) {
+        expect(bound.left).toBeGreaterThanOrEqual(0);
+        expect(bound.top).toBeGreaterThanOrEqual(0);
+        expect(bound.right).toBeLessThanOrEqual(preview.width);
+        expect(bound.bottom).toBeLessThanOrEqual(preview.height);
+      }
+      for (let first = 0; first < bounds.length; first += 1) {
+        for (let second = first + 1; second < bounds.length; second += 1) {
+          const a = bounds[first];
+          const b = bounds[second];
+          expect(
+            a.left < b.right &&
+              a.right > b.left &&
+              a.top < b.bottom &&
+              a.bottom > b.top
+          ).toBe(false);
+        }
+      }
+    }
   });
 
   it("references the single deterministic full-page WebP derivative", () => {
@@ -114,27 +161,110 @@ describe("documentPreprocessorDemo", () => {
 describe("document preprocessor state", () => {
   it("starts closed and opens/closes in a neutral reset state", () => {
     const closed = getDocumentPreprocessorState();
-    expect(closed).toEqual({ isOpen: false, previewRegion: null, pinnedRegion: null });
+    expect(closed).toEqual({
+      isOpen: false,
+      hoveredRegion: null,
+      focusedRegion: null,
+      pinnedRegion: null,
+    });
     const open = reduceDocumentPreprocessorState(closed, { type: "toggle" });
-    expect(open).toEqual({ isOpen: true, previewRegion: null, pinnedRegion: null });
-    expect(reduceDocumentPreprocessorState(open, { type: "toggle" })).toEqual(closed);
+    expect(open).toEqual({
+      isOpen: true,
+      hoveredRegion: null,
+      focusedRegion: null,
+      pinnedRegion: null,
+    });
+    expect(reduceDocumentPreprocessorState(open, { type: "toggle" })).toEqual(
+      closed
+    );
   });
 
-  it("previews, clears preview, pins, replaces, unpins, and closes exactly", () => {
-    let state = reduceDocumentPreprocessorState(getDocumentPreprocessorState(), {
-      type: "toggle",
+  it("keeps hover and focus previews independent with focus precedence", () => {
+    let state = reduceDocumentPreprocessorState(
+      getDocumentPreprocessorState(),
+      {
+        type: "toggle",
+      }
+    );
+    state = reduceDocumentPreprocessorState(state, {
+      type: "toggle-pin",
+      region: "title",
     });
-    state = reduceDocumentPreprocessorState(state, { type: "preview", region: "title" });
-    expect(state.previewRegion).toBe("title");
-    state = reduceDocumentPreprocessorState(state, { type: "toggle-pin", region: "title" });
+    state = reduceDocumentPreprocessorState(state, {
+      type: "hover",
+      region: "summary",
+    });
+    state = reduceDocumentPreprocessorState(state, {
+      type: "focus",
+      region: "table",
+    });
+    expect(getActiveDocumentRegion(state)).toBe("table");
+
+    const hoverLeavesFirst = reduceDocumentPreprocessorState(state, {
+      type: "clear-hover",
+    });
+    expect(getActiveDocumentRegion(hoverLeavesFirst)).toBe("table");
+    expect(
+      getActiveDocumentRegion(
+        reduceDocumentPreprocessorState(hoverLeavesFirst, {
+          type: "clear-focus",
+        })
+      )
+    ).toBe("title");
+
+    const focusBlursFirst = reduceDocumentPreprocessorState(state, {
+      type: "clear-focus",
+    });
+    expect(getActiveDocumentRegion(focusBlursFirst)).toBe("summary");
+    expect(
+      getActiveDocumentRegion(
+        reduceDocumentPreprocessorState(focusBlursFirst, {
+          type: "clear-hover",
+        })
+      )
+    ).toBe("title");
+  });
+
+  it("hovers, focuses, pins, replaces, unpins, and closes exactly", () => {
+    let state = reduceDocumentPreprocessorState(
+      getDocumentPreprocessorState(),
+      {
+        type: "toggle",
+      }
+    );
+    state = reduceDocumentPreprocessorState(state, {
+      type: "hover",
+      region: "title",
+    });
+    expect(state.hoveredRegion).toBe("title");
+    state = reduceDocumentPreprocessorState(state, {
+      type: "toggle-pin",
+      region: "title",
+    });
     expect(state.pinnedRegion).toBe("title");
-    state = reduceDocumentPreprocessorState(state, { type: "preview", region: "table" });
-    expect(state.previewRegion ?? state.pinnedRegion).toBe("table");
-    state = reduceDocumentPreprocessorState(state, { type: "clear-preview" });
-    expect(state).toEqual({ isOpen: true, previewRegion: null, pinnedRegion: "title" });
-    state = reduceDocumentPreprocessorState(state, { type: "toggle-pin", region: "chart" });
+    state = reduceDocumentPreprocessorState(state, {
+      type: "focus",
+      region: "table",
+    });
+    expect(getActiveDocumentRegion(state)).toBe("table");
+    state = reduceDocumentPreprocessorState(state, { type: "clear-focus" });
+    expect(getActiveDocumentRegion(state)).toBe("title");
+    state = reduceDocumentPreprocessorState(state, { type: "clear-hover" });
+    expect(state).toEqual({
+      isOpen: true,
+      hoveredRegion: null,
+      focusedRegion: null,
+      pinnedRegion: "title",
+    });
+    state = reduceDocumentPreprocessorState(state, {
+      type: "toggle-pin",
+      region: "chart",
+    });
     expect(state.pinnedRegion).toBe("chart");
-    state = reduceDocumentPreprocessorState(state, { type: "toggle-pin", region: "chart" });
+    state = reduceDocumentPreprocessorState(state, {
+      type: "toggle-pin",
+      region: "chart",
+    });
     expect(state.pinnedRegion).toBeNull();
     expect(reduceDocumentPreprocessorState(state, { type: "close" })).toEqual(
       getDocumentPreprocessorState()
@@ -144,9 +274,11 @@ describe("document preprocessor state", () => {
   it("ignores source/result events while closed", () => {
     const closed = getDocumentPreprocessorState();
     for (const event of [
-      { type: "preview", region: "summary" },
+      { type: "hover", region: "summary" },
+      { type: "focus", region: "summary" },
       { type: "toggle-pin", region: "summary" },
-      { type: "clear-preview" },
+      { type: "clear-hover" },
+      { type: "clear-focus" },
     ] as const) {
       expect(reduceDocumentPreprocessorState(closed, event)).toEqual(closed);
     }

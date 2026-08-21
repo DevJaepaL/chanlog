@@ -1,11 +1,11 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { getDocumentRegionSourceControlBounds } from "@/components/portfolio/document-preprocessor-demo";
 import { DocumentPreprocessorSection } from "@/components/portfolio/document-preprocessor-section";
-import type { DocumentRegionId } from "@/lib/document-preprocessor";
-
-const REGION_IDS: DocumentRegionId[] = ["title", "summary", "table", "chart"];
+import {
+  documentPreprocessorDemo,
+  getDocumentRegionMarkerBounds,
+} from "@/lib/document-preprocessor";
 
 describe("DocumentPreprocessorSection", () => {
   it("renders the collapsed portfolio section from the shared demo contract", () => {
@@ -32,8 +32,8 @@ describe("DocumentPreprocessorSection", () => {
       { width: 190, height: 269 },
       { width: 450, height: 636 },
     ]) {
-      const bounds = REGION_IDS.map((region) =>
-        getDocumentRegionSourceControlBounds(region, viewport)
+      const bounds = documentPreprocessorDemo.regions.map((region) =>
+        getDocumentRegionMarkerBounds(region, viewport)
       );
 
       for (const bound of bounds) {

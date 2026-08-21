@@ -16,12 +16,12 @@
 - The demo starts collapsed and opens inline. It must not open a modal, new page, new tab, PDF viewer, download, or additional URL.
 - The only deployed source asset is `public/images/document-preprocessor/customs-2026-07-page-1.webp`, rendered from page 1 of `C:\Users\META06\Downloads\D26080074.pdf`. Do not copy the PDF or render/deploy pages 2–19; do not recreate the document in HTML or substitute a synthetic image.
 - The exact visible card copy is title `문서 전처리기 구현`, description `PDF·DOCX·HWP의 제목·본문·표·차트를 구조 단위로 분리했습니다.`, collapsed action `구현 보기`, expanded action `접기`, and source `출처: 관세청 「2026년 7월 수출입 현황 [확정치]」, 2026. 8. 18., 1쪽` with no external source link.
-- Region ids are exactly `title`, `summary`, `table`, `chart`. Default open state is neutral; hover/focus previews, click/Enter/Space pins or unpins, another region replaces the pin, and close resets open/preview/pinned state and returns focus to the expansion action. Escape is not an expansion-action behavior.
+- Region ids are exactly `title`, `summary`, `table`, `chart`. Default open state is neutral; hover and focus are tracked independently with `focusedRegion ?? hoveredRegion ?? pinnedRegion` precedence, click/Enter/Space pins or unpins, another region replaces the pin, and close resets open/hover/focus/pinned state and returns focus to the expansion action. Escape is not an expansion-action behavior.
 - Expansion occurs only through the outer action `button` click or its native Enter/Space activation. Card hover/focus and clicks outside that button must not expand or change height.
-- The four source regions and four result actions are real `button` elements with accessible names `문서 제목 선택`, `요약 선택`, `표 선택`, and `차트 선택`, visible `focus-visible` rings, practical minimum 44px targets, and `aria-pressed="true"` only for the pinned region. The expansion action has `aria-expanded` and `aria-controls`.
+- The four exact source rects are non-interactive outlines. Four numbered source marker buttons have centers inside their corresponding rects and pair with four result actions; all eight controls use accessible names `문서 제목 선택`, `요약 선택`, `표 선택`, and `차트 선택`, visible `focus-visible` rings, practical minimum 44px targets, and `aria-pressed="true"` only for the pinned region. Keeping the shallow title rect separate from its 44px marker prevents title/summary hit-target overlap. The expansion action has `aria-expanded` and `aria-controls`.
 - Desktop (`sm`+) uses one `bg-surface border-hairline rounded-lg` two-column panel; mobile stacks the source before results without horizontal scrolling or connector lines. Preserve the full page ratio and readable table/chart content.
 - Use only existing Tailwind/DESIGN.md tokens. `accent-*` classifies the four element types and must be paired with text labels/outlines; `primary` is only action/link/focus/active selection, `secondary` remains Hero-only. Add no palette, shadow, animation, dependency, technical chips, or long technical explanation. Reduced motion makes all state feedback immediate; the existing Section fade-up is the only entrance animation.
-- `lib/document-preprocessor.ts` is the single owner of text, source attribution, image metadata/path, normalized rectangles, labels, element classification, and semantic result payloads. Rendering components must not repeat those values.
+- `lib/document-preprocessor.ts` is the single owner of text, source attribution, image metadata/path, normalized rectangles, marker points/numbers, labels, element classification, semantic result payloads, and interaction precedence. Rendering components must not repeat those values.
 - Do not display `Chroma`, `Elasticsearch`, `BGE`, indexing, naive-versus-structured extraction, performance/scale/accuracy, internal architecture/network/specification, customer names, or customer/internal documents.
 - Header order is exactly `아카이브` (`/`) → `포트폴리오` (`/portfolio`) → decorative divider → `Contact` → `GitHub`. Remove the `파이프라인` tab. Desktop remains one row; mobile remains logo/actions on row one and archive/portfolio on row two.
 - `/pipeline` is not an App Router page. It must be a framework-level 308 redirect with raw `Location: /portfolio#document-preprocessor`; `/pipeline/...` is untouched and 404. Preserve the existing `/posts` 308 redirect to `/`, `/posts/[slug]`, archive thumbnails/posts, and the global Footer.
@@ -58,10 +58,11 @@ Run tasks in this exact order. No file is owned by more than one task. Task 3 is
 
 - Produces `type DocumentRegionId = "title" | "summary" | "table" | "chart"`.
 - Produces `interface NormalizedRect { x: number; y: number; width: number; height: number }`, where every value is normalized to `[0, 1]` against the complete 1785×2523 page image.
+- Produces one normalized marker point and number inside each region plus a pure 44px marker-bounds helper.
 - Produces `DocumentRegion`, `DocumentPreprocessorDemo`, and the immutable `documentPreprocessorDemo` payload shown below.
-- Produces `DocumentPreprocessorState = { isOpen: boolean; previewRegion: DocumentRegionId | null; pinnedRegion: DocumentRegionId | null }`.
-- Produces `DocumentPreprocessorEvent` variants `{ type: "toggle" }`, `{ type: "preview"; region }`, `{ type: "clear-preview" }`, `{ type: "toggle-pin"; region }`, and `{ type: "close" }`.
-- Produces `getDocumentPreprocessorState(): DocumentPreprocessorState` and `reduceDocumentPreprocessorState(state: DocumentPreprocessorState, event: DocumentPreprocessorEvent): DocumentPreprocessorState` for Task 2. The rendered active region is `state.previewRegion ?? state.pinnedRegion`; clearing preview reveals the pin, and close resets all three fields.
+- Produces `DocumentPreprocessorState = { isOpen: boolean; hoveredRegion: DocumentRegionId | null; focusedRegion: DocumentRegionId | null; pinnedRegion: DocumentRegionId | null }`.
+- Produces independent hover/focus event pairs, `{ type: "toggle-pin"; region }`, `{ type: "toggle" }`, and `{ type: "close" }`.
+- Produces `getDocumentPreprocessorState`, `getActiveDocumentRegion`, and `reduceDocumentPreprocessorState` for Task 2. Active precedence is focus, then hover, then pin; mouseleave and blur clear only their own transient channels, and close resets all four fields.
 
 - [ ] **Step 1: Write the complete failing pure-contract test.**
 
@@ -74,7 +75,9 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   documentPreprocessorDemo,
+  getActiveDocumentRegion,
   getDocumentPreprocessorState,
+  getDocumentRegionMarkerBounds,
   reduceDocumentPreprocessorState,
   type DocumentRegionId,
 } from "@/lib/document-preprocessor";
@@ -184,28 +187,59 @@ describe("documentPreprocessorDemo", () => {
 describe("document preprocessor state", () => {
   it("starts closed and opens/closes in a neutral reset state", () => {
     const closed = getDocumentPreprocessorState();
-    expect(closed).toEqual({ isOpen: false, previewRegion: null, pinnedRegion: null });
+    expect(closed).toEqual({
+      isOpen: false,
+      hoveredRegion: null,
+      focusedRegion: null,
+      pinnedRegion: null,
+    });
     const open = reduceDocumentPreprocessorState(closed, { type: "toggle" });
-    expect(open).toEqual({ isOpen: true, previewRegion: null, pinnedRegion: null });
+    expect(open).toEqual({
+      isOpen: true,
+      hoveredRegion: null,
+      focusedRegion: null,
+      pinnedRegion: null,
+    });
     expect(reduceDocumentPreprocessorState(open, { type: "toggle" })).toEqual(closed);
   });
 
-  it("previews, clears preview, pins, replaces, unpins, and closes exactly", () => {
+  it("keeps hover and focus independent with focus precedence", () => {
     let state = reduceDocumentPreprocessorState(getDocumentPreprocessorState(), {
       type: "toggle",
     });
-    state = reduceDocumentPreprocessorState(state, { type: "preview", region: "title" });
-    expect(state.previewRegion).toBe("title");
     state = reduceDocumentPreprocessorState(state, { type: "toggle-pin", region: "title" });
-    expect(state.pinnedRegion).toBe("title");
-    state = reduceDocumentPreprocessorState(state, { type: "preview", region: "table" });
-    expect(state.previewRegion ?? state.pinnedRegion).toBe("table");
-    state = reduceDocumentPreprocessorState(state, { type: "clear-preview" });
-    expect(state).toEqual({ isOpen: true, previewRegion: null, pinnedRegion: "title" });
-    state = reduceDocumentPreprocessorState(state, { type: "toggle-pin", region: "chart" });
-    expect(state.pinnedRegion).toBe("chart");
-    state = reduceDocumentPreprocessorState(state, { type: "toggle-pin", region: "chart" });
-    expect(state.pinnedRegion).toBeNull();
+    state = reduceDocumentPreprocessorState(state, { type: "hover", region: "summary" });
+    state = reduceDocumentPreprocessorState(state, { type: "focus", region: "table" });
+    expect(getActiveDocumentRegion(state)).toBe("table");
+
+    const hoverLeavesFirst = reduceDocumentPreprocessorState(state, {
+      type: "clear-hover",
+    });
+    expect(getActiveDocumentRegion(hoverLeavesFirst)).toBe("table");
+    expect(
+      getActiveDocumentRegion(
+        reduceDocumentPreprocessorState(hoverLeavesFirst, { type: "clear-focus" })
+      )
+    ).toBe("title");
+
+    const focusBlursFirst = reduceDocumentPreprocessorState(state, {
+      type: "clear-focus",
+    });
+    expect(getActiveDocumentRegion(focusBlursFirst)).toBe("summary");
+    expect(
+      getActiveDocumentRegion(
+        reduceDocumentPreprocessorState(focusBlursFirst, { type: "clear-hover" })
+      )
+    ).toBe("title");
+  });
+
+  it("resets every interaction channel on close", () => {
+    let state = reduceDocumentPreprocessorState(getDocumentPreprocessorState(), {
+      type: "toggle",
+    });
+    state = reduceDocumentPreprocessorState(state, { type: "hover", region: "summary" });
+    state = reduceDocumentPreprocessorState(state, { type: "focus", region: "table" });
+    state = reduceDocumentPreprocessorState(state, { type: "toggle-pin", region: "title" });
     expect(reduceDocumentPreprocessorState(state, { type: "close" })).toEqual(
       getDocumentPreprocessorState()
     );
@@ -214,9 +248,11 @@ describe("document preprocessor state", () => {
   it("ignores source/result events while closed", () => {
     const closed = getDocumentPreprocessorState();
     for (const event of [
-      { type: "preview", region: "summary" },
+      { type: "hover", region: "summary" },
+      { type: "focus", region: "summary" },
       { type: "toggle-pin", region: "summary" },
-      { type: "clear-preview" },
+      { type: "clear-hover" },
+      { type: "clear-focus" },
     ] as const) {
       expect(reduceDocumentPreprocessorState(closed, event)).toEqual(closed);
     }
@@ -293,6 +329,11 @@ export interface NormalizedRect {
   height: number;
 }
 
+export interface NormalizedPoint {
+  x: number;
+  y: number;
+}
+
 type TextResult = { kind: "text" | "list"; lines: readonly string[] };
 type TableResult = {
   kind: "table";
@@ -310,6 +351,10 @@ export interface DocumentRegion {
   accessibleName: "문서 제목 선택" | "요약 선택" | "표 선택" | "차트 선택";
   accent: DocumentRegionAccent;
   rect: NormalizedRect;
+  marker: {
+    point: NormalizedPoint;
+    number: "1" | "2" | "3" | "4";
+  };
   result: TextResult | TableResult | FigureResult;
 }
 
@@ -344,6 +389,7 @@ export const documentPreprocessorDemo = {
       accessibleName: "문서 제목 선택",
       accent: "orange",
       rect: { x: 0.162, y: 0.157, width: 0.689, height: 0.032 },
+      marker: { point: { x: 0.82, y: 0.173 }, number: "1" },
       result: { kind: "text", lines: ["2026년 7월 수출입 현황 [확정치]"] },
     },
     {
@@ -352,6 +398,7 @@ export const documentPreprocessorDemo = {
       accessibleName: "요약 선택",
       accent: "teal",
       rect: { x: 0.104, y: 0.198, width: 0.804, height: 0.081 },
+      marker: { point: { x: 0.14, y: 0.239 }, number: "2" },
       result: {
         kind: "list",
         lines: [
@@ -367,6 +414,7 @@ export const documentPreprocessorDemo = {
       accessibleName: "표 선택",
       accent: "purple",
       rect: { x: 0.16, y: 0.481, width: 0.737, height: 0.145 },
+      marker: { point: { x: 0.82, y: 0.554 }, number: "3" },
       result: {
         kind: "table",
         columns: ["구분", "2026년 7월", "전년 동월 대비"],
@@ -382,26 +430,58 @@ export const documentPreprocessorDemo = {
       accessibleName: "차트 선택",
       accent: "sky",
       rect: { x: 0.157, y: 0.735, width: 0.743, height: 0.189 },
+      marker: { point: { x: 0.18, y: 0.83 }, number: "4" },
       result: { kind: "figure", label: "월별 수출입 현황", caption: "수출입 추이" },
     },
   ],
 } as const satisfies DocumentPreprocessorDemo;
 
+const DOCUMENT_REGION_MARKER_SIZE = 44;
+
+export function getDocumentRegionMarkerBounds(
+  region: DocumentRegion,
+  preview: { width: number; height: number }
+) {
+  const halfSize = DOCUMENT_REGION_MARKER_SIZE / 2;
+  const centerX = region.marker.point.x * preview.width;
+  const centerY = region.marker.point.y * preview.height;
+  return {
+    left: centerX - halfSize,
+    top: centerY - halfSize,
+    right: centerX + halfSize,
+    bottom: centerY + halfSize,
+  };
+}
+
 export interface DocumentPreprocessorState {
   isOpen: boolean;
-  previewRegion: DocumentRegionId | null;
+  hoveredRegion: DocumentRegionId | null;
+  focusedRegion: DocumentRegionId | null;
   pinnedRegion: DocumentRegionId | null;
 }
 
 export type DocumentPreprocessorEvent =
   | { type: "toggle" }
-  | { type: "preview"; region: DocumentRegionId }
-  | { type: "clear-preview" }
+  | { type: "hover"; region: DocumentRegionId }
+  | { type: "clear-hover" }
+  | { type: "focus"; region: DocumentRegionId }
+  | { type: "clear-focus" }
   | { type: "toggle-pin"; region: DocumentRegionId }
   | { type: "close" };
 
 export function getDocumentPreprocessorState(): DocumentPreprocessorState {
-  return { isOpen: false, previewRegion: null, pinnedRegion: null };
+  return {
+    isOpen: false,
+    hoveredRegion: null,
+    focusedRegion: null,
+    pinnedRegion: null,
+  };
+}
+
+export function getActiveDocumentRegion(
+  state: DocumentPreprocessorState
+): DocumentRegionId | null {
+  return state.focusedRegion ?? state.hoveredRegion ?? state.pinnedRegion;
 }
 
 export function reduceDocumentPreprocessorState(
@@ -412,11 +492,18 @@ export function reduceDocumentPreprocessorState(
   if (event.type === "toggle") {
     return state.isOpen
       ? getDocumentPreprocessorState()
-      : { isOpen: true, previewRegion: null, pinnedRegion: null };
+      : {
+          isOpen: true,
+          hoveredRegion: null,
+          focusedRegion: null,
+          pinnedRegion: null,
+        };
   }
   if (!state.isOpen) return state;
-  if (event.type === "preview") return { ...state, previewRegion: event.region };
-  if (event.type === "clear-preview") return { ...state, previewRegion: null };
+  if (event.type === "hover") return { ...state, hoveredRegion: event.region };
+  if (event.type === "clear-hover") return { ...state, hoveredRegion: null };
+  if (event.type === "focus") return { ...state, focusedRegion: event.region };
+  if (event.type === "clear-focus") return { ...state, focusedRegion: null };
   return {
     ...state,
     pinnedRegion: state.pinnedRegion === event.region ? null : event.region,
@@ -458,7 +545,7 @@ Expected staged names are exactly the three Task 1 paths; no PDF, other rendered
 
 **Interfaces:**
 
-- Consumes `documentPreprocessorDemo`, `DocumentRegion`, `DocumentRegionId`, `getDocumentPreprocessorState`, and `reduceDocumentPreprocessorState` exactly as Task 1 exports them.
+- Consumes `documentPreprocessorDemo`, `DocumentRegion`, `DocumentRegionId`, `getDocumentPreprocessorState`, `getActiveDocumentRegion`, and `reduceDocumentPreprocessorState` exactly as Task 1 exports them. Region marker point/number and its 44px bounds helper also stay in the shared data boundary.
 - Produces `<DocumentPreprocessorSection />`, whose only responsibilities are the `Section` placement, static card title/description, and card shell.
 - Produces client `<DocumentPreprocessorDemo />`, whose only responsibilities are the expansion action, reducer state, focus restoration, responsive panel, and synchronized source/result actions.
 - `app/portfolio/page.tsx` imports from `@/components/portfolio/document-preprocessor-section` and inserts one instance immediately after `<ProjectList />` and before `<SkillGroups />` without changing portfolio metadata.
@@ -507,7 +594,7 @@ Modify `app/portfolio/page.tsx` only by importing `DocumentPreprocessorSection` 
 
 - [ ] **Step 3: Implement the client reducer wiring, semantic results, and synchronized actions.**
 
-Create `components/portfolio/document-preprocessor-demo.tsx` with `"use client"`, `next/image`, `useReducer`, and `useRef`. Keep all visible data reads in `documentPreprocessorDemo`; the only local mapping is static Tailwind class selection keyed by region id:
+Create `components/portfolio/document-preprocessor-demo.tsx` with `"use client"`, `next/image`, `useReducer`, and `useRef`. Keep all visible data, marker point/number, and interaction-state decisions in `documentPreprocessorDemo` and its shared pure helpers; the only local mappings are static Tailwind class selections keyed by accent:
 
 ```tsx
 "use client";
@@ -516,6 +603,7 @@ import Image from "next/image";
 import { useReducer, useRef } from "react";
 import {
   documentPreprocessorDemo,
+  getActiveDocumentRegion,
   getDocumentPreprocessorState,
   reduceDocumentPreprocessorState,
   type DocumentRegion,
@@ -527,6 +615,13 @@ const accentStyles = {
   teal: "border-accent-teal bg-accent-teal/10",
   purple: "border-accent-purple bg-accent-purple/10",
   sky: "border-accent-sky bg-accent-sky/10",
+};
+
+const accentBorderStyles = {
+  orange: "border-accent-orange",
+  teal: "border-accent-teal",
+  purple: "border-accent-purple",
+  sky: "border-accent-sky",
 };
 
 function ResultContent({ region }: { region: DocumentRegion }) {
@@ -575,10 +670,12 @@ export function DocumentPreprocessorDemo() {
     getDocumentPreprocessorState
   );
   const actionRef = useRef<HTMLButtonElement>(null);
-  const activeRegion = state.previewRegion ?? state.pinnedRegion;
+  const activeRegion = getActiveDocumentRegion(state);
 
-  const preview = (region: DocumentRegionId) => dispatch({ type: "preview", region });
-  const clearPreview = () => dispatch({ type: "clear-preview" });
+  const hover = (region: DocumentRegionId) => dispatch({ type: "hover", region });
+  const clearHover = () => dispatch({ type: "clear-hover" });
+  const focus = (region: DocumentRegionId) => dispatch({ type: "focus", region });
+  const clearFocus = () => dispatch({ type: "clear-focus" });
   const togglePin = (region: DocumentRegionId) => dispatch({ type: "toggle-pin", region });
   const toggleOpen = () => {
     if (!state.isOpen) {
@@ -621,27 +718,43 @@ export function DocumentPreprocessorDemo() {
                 {documentPreprocessorDemo.regions.map((region) => {
                   const active = activeRegion === region.id;
                   return (
-                    <button
-                      key={region.id}
-                      type="button"
-                      aria-label={region.accessibleName}
-                      aria-pressed={state.pinnedRegion === region.id}
-                      onMouseEnter={() => preview(region.id)}
-                      onMouseLeave={clearPreview}
-                      onFocus={() => preview(region.id)}
-                      onBlur={clearPreview}
-                      onClick={() => togglePin(region.id)}
+                    <div
+                      key={`${region.id}-outline`}
+                      aria-hidden="true"
                       style={{
                         left: `${region.rect.x * 100}%`,
                         top: `${region.rect.y * 100}%`,
                         width: `${region.rect.width * 100}%`,
                         height: `${region.rect.height * 100}%`,
                       }}
-                      className={`absolute min-h-11 min-w-11 rounded-xs border-2 transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${accentStyles[region.accent]} ${active ? "ring-2 ring-primary" : ""}`}
+                      className={`pointer-events-none absolute rounded-xs border-2 transition-colors motion-reduce:transition-none ${accentStyles[region.accent]} ${active ? "outline outline-2 outline-offset-2 outline-primary" : ""}`}
                     >
                       <span className="absolute left-0 top-0 bg-surface px-1 text-eyebrow text-ink">
                         {region.label}
                       </span>
+                    </div>
+                  );
+                })}
+                {documentPreprocessorDemo.regions.map((region) => {
+                  const active = activeRegion === region.id;
+                  return (
+                    <button
+                      key={region.id}
+                      type="button"
+                      aria-label={region.accessibleName}
+                      aria-pressed={state.pinnedRegion === region.id}
+                      onMouseEnter={() => hover(region.id)}
+                      onMouseLeave={clearHover}
+                      onFocus={() => focus(region.id)}
+                      onBlur={clearFocus}
+                      onClick={() => togglePin(region.id)}
+                      style={{
+                        left: `${region.marker.point.x * 100}%`,
+                        top: `${region.marker.point.y * 100}%`,
+                      }}
+                      className={`absolute z-10 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-surface text-button text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none ${accentBorderStyles[region.accent]} ${active ? "outline outline-2 outline-primary" : ""}`}
+                    >
+                      <span aria-hidden="true">{region.marker.number}</span>
                     </button>
                   );
                 })}
@@ -659,14 +772,16 @@ export function DocumentPreprocessorDemo() {
                         type="button"
                         aria-label={region.accessibleName}
                         aria-pressed={state.pinnedRegion === region.id}
-                        onMouseEnter={() => preview(region.id)}
-                        onMouseLeave={clearPreview}
-                        onFocus={() => preview(region.id)}
-                        onBlur={clearPreview}
+                        onMouseEnter={() => hover(region.id)}
+                        onMouseLeave={clearHover}
+                        onFocus={() => focus(region.id)}
+                        onBlur={clearFocus}
                         onClick={() => togglePin(region.id)}
-                        className={`flex min-h-11 w-full items-center gap-2 rounded-md text-left text-button text-ink transition-colors motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${active ? "ring-2 ring-primary" : ""}`}
+                        className={`flex min-h-11 w-full items-center gap-2 rounded-md text-left text-button text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none ${active ? "outline outline-2 outline-primary" : ""}`}
                       >
-                        <span aria-hidden="true" className={`h-3 w-3 rounded-full border ${accentStyles[region.accent]}`} />
+                        <span aria-hidden="true" className={`flex h-6 w-6 items-center justify-center rounded-full border text-caption ${accentStyles[region.accent]}`}>
+                          {region.marker.number}
+                        </span>
                         <span>{region.label}</span>
                       </button>
                       <ResultContent region={region} />
@@ -689,7 +804,8 @@ Implementation review rules for this code:
 - Do not add click/keyboard handlers to `Card`, `Section`, title, description, or panel; native action-button activation is the only expansion entry point.
 - Keep the panel as the action button’s next DOM sibling. Do not add Escape handling.
 - Source and result controls dispatch the same reducer events. Native button click supplies Enter/Space and touch behavior; do not duplicate `onKeyDown` and accidentally double-toggle.
-- `previewRegion` temporarily wins over `pinnedRegion`; blur/mouseleave clears only preview and reveals a pin. Default open has neither ring.
+- `focusedRegion ?? hoveredRegion ?? pinnedRegion` determines the active pair. `mouseleave` clears only hover and `blur` clears only focus, so mixed mouse/keyboard input cannot erase the other transient state; clearing both reveals a pin. Default open has no active outline.
+- Render each exact source rect as a `pointer-events-none` outline. Put one 44×44 numbered marker button with its center inside that rect; do not inflate the shallow rect into the hit target. Shared marker data and bounds tests must prove the four targets remain inside the image and non-overlapping at supported small/large previews.
 - The result action is a sibling of semantic content, not a button wrapping a table/figure. Preserve valid heading/list/table/figure/figcaption markup.
 - Do not draw mobile connector lines. If a short desktop guide is judged necessary during visual QA, it must be `hidden sm:block`, `aria-hidden`, non-crossing, and made from `border-hairline`; omission is preferred because matching labels/outlines already communicate the relationship.
 

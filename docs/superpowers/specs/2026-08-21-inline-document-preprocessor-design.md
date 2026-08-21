@@ -69,11 +69,15 @@ header, sitemap, canonical 및 어떤 랜딩 메타데이터에도 남기지 않
 ### 펼친 카드
 
 상태는 `closed`, `open-previewing(region)`, `open-pinned(region)`으로 분리한다. region id는
-`title`, `summary`, `table`, `chart` 네 개뿐이다.
+`title`, `summary`, `table`, `chart` 네 개뿐이다. 포인터 hover와 키보드 focus는 서로 독립된
+임시 상태로 추적하고, 실제 강조 region은 `focusedRegion ?? hoveredRegion ?? pinnedRegion`
+순서로 정한다.
 
 - 기본 열림 상태에는 선택된 region이 없고, 네 의미 결과를 모두 중립적으로 보여 준다.
 - 원본 미리보기의 영역 또는 결과의 같은 레이블에 hover/focus하면 해당 영역만 임시
-  `previewing`으로 강조한다. 포커스가 떠나면 고정 선택이 없을 때 중립 상태로 돌아간다.
+  `previewing`으로 강조한다. mouseleave는 hover만, blur는 focus만 해제하므로 focus가 남은
+  상태의 mouseleave가 키보드 preview를 지우지 않는다. 두 임시 상태가 모두 해제되면 pin을
+  다시 드러내고, pin도 없을 때만 중립 상태로 돌아간다.
 - click, Enter 또는 Space는 region을 `pinned`로 고정한다. 같은 region을 다시 조작하면
   고정을 해제한다. 다른 region을 조작하면 그 region으로 고정을 교체한다.
 - 키보드와 터치도 같은 상태 전이를 사용한다. 펼침 action의 Escape 동작은 제공하지 않으며,
@@ -85,8 +89,10 @@ header, sitemap, canonical 및 어떤 랜딩 메타데이터에도 남기지 않
 데스크톱(`sm` 이상) 펼침 패널은 하나의 `bg-surface`, `border-hairline`, `rounded-lg` 카드 안에
 2열로 배치한다.
 
-- 왼쪽은 실제 PDF 1쪽 미리보기와 투명한 네 클릭 영역이다. 각 영역은 제목, 요약, 작은 표,
-  차트의 실제 위치를 감싼다.
+- 왼쪽은 실제 PDF 1쪽 미리보기와 네 개의 실제 rect를 정확히 감싸는 비상호작용 outline,
+  그리고 각 rect 안에 중심을 둔 1–4 번호 marker `button`이다. outline은 위치만 표시하고
+  pointer event를 받지 않으며, marker가 44×44 조작 대상을 제공한다. 얕은 제목 rect 자체를
+  44px로 부풀리지 않으므로 제목·요약 target이 겹치지 않는다.
 - 오른쪽은 `구조 결과` 아래 네 개의 semantic result 행을 둔다. 행에는 레이블, 짧은 결과,
   그리고 원본 위치를 가리키는 비색상 표식을 둔다.
 - 연결선이 필요하면 같은 행의 짧은 수평 가이드만 사용하며 교차시키지 않는다. 상태 전달은
@@ -137,15 +143,16 @@ header, sitemap, canonical 및 어떤 랜딩 메타데이터에도 남기지 않
 
 `components/portfolio/document-preprocessor-section.tsx`는 Section 배치와 접힌 카드만 담당한다.
 클라이언트 하위 컴포넌트 `components/portfolio/document-preprocessor-demo.tsx`는 toggle,
-preview, pin 상태와 source/result 동기화를 담당한다. 두 컴포넌트는 portfolio-scoped이며,
+독립된 hover/focus preview, pin 상태와 source/result 동기화를 담당한다. 두 컴포넌트는 portfolio-scoped이며,
 독립 `components/pipeline` 디렉터리를 유지하거나 새로 만들지 않는다. `app/portfolio/page.tsx`는
 `ProjectList`와 `SkillGroups` 사이에 섹션 하나를 조립할 뿐이고, `/pipeline` 페이지를 만들지
 않는다.
 
 순수 상태 계약은 `getDocumentPreprocessorState`와 `reduceDocumentPreprocessorState`로 분리한다.
-입력 event는 `toggle`, `preview(region)`, `clear-preview`, `toggle-pin(region)`, `close`이고,
-반환 state는 열린 여부, preview region, pinned region만 가진다. 이 경계는 컴포넌트 외부에서
-동일한 mouse, keyboard, touch semantics를 테스트하게 한다.
+입력 event는 `toggle`, `hover(region)`, `clear-hover`, `focus(region)`, `clear-focus`,
+`toggle-pin(region)`, `close`이고, 반환 state는 열린 여부, hovered region, focused region,
+pinned region을 가진다. 이 경계와 `getActiveDocumentRegion` pure helper는 컴포넌트 외부에서
+동일한 mouse, keyboard, touch semantics와 focus > hover > pin 우선순위를 테스트하게 한다.
 
 ## 9. SEO와 리다이렉트
 

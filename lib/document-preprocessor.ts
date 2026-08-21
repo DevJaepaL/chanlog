@@ -8,13 +8,18 @@ export interface NormalizedRect {
   height: number;
 }
 
+export interface NormalizedPoint {
+  x: number;
+  y: number;
+}
+
 type TextResult = { kind: "text" | "list"; lines: readonly string[] };
 type TableResult = {
   kind: "table";
   columns: readonly ["구분", "2026년 7월", "전년 동월 대비"];
   rows: readonly [
     { label: "수출"; cells: readonly ["98,959백만 달러", "63.0% 증가"] },
-    { label: "수입"; cells: readonly ["68,567백만 달러", "26.5% 증가"] },
+    { label: "수입"; cells: readonly ["68,567백만 달러", "26.5% 증가"] }
   ];
 };
 type FigureResult = { kind: "figure"; label: string; caption: string };
@@ -25,6 +30,10 @@ export interface DocumentRegion {
   accessibleName: "문서 제목 선택" | "요약 선택" | "표 선택" | "차트 선택";
   accent: DocumentRegionAccent;
   rect: NormalizedRect;
+  marker: {
+    point: NormalizedPoint;
+    number: "1" | "2" | "3" | "4";
+  };
   result: TextResult | TableResult | FigureResult;
 }
 
@@ -59,6 +68,7 @@ export const documentPreprocessorDemo = {
       accessibleName: "문서 제목 선택",
       accent: "orange",
       rect: { x: 0.162, y: 0.157, width: 0.689, height: 0.032 },
+      marker: { point: { x: 0.82, y: 0.173 }, number: "1" },
       result: { kind: "text", lines: ["2026년 7월 수출입 현황 [확정치]"] },
     },
     {
@@ -67,6 +77,7 @@ export const documentPreprocessorDemo = {
       accessibleName: "요약 선택",
       accent: "teal",
       rect: { x: 0.104, y: 0.198, width: 0.804, height: 0.081 },
+      marker: { point: { x: 0.14, y: 0.239 }, number: "2" },
       result: {
         kind: "list",
         lines: [
@@ -82,6 +93,7 @@ export const documentPreprocessorDemo = {
       accessibleName: "표 선택",
       accent: "purple",
       rect: { x: 0.16, y: 0.481, width: 0.737, height: 0.145 },
+      marker: { point: { x: 0.82, y: 0.554 }, number: "3" },
       result: {
         kind: "table",
         columns: ["구분", "2026년 7월", "전년 동월 대비"],
@@ -97,26 +109,62 @@ export const documentPreprocessorDemo = {
       accessibleName: "차트 선택",
       accent: "sky",
       rect: { x: 0.157, y: 0.735, width: 0.743, height: 0.189 },
-      result: { kind: "figure", label: "월별 수출입 현황", caption: "수출입 추이" },
+      marker: { point: { x: 0.18, y: 0.83 }, number: "4" },
+      result: {
+        kind: "figure",
+        label: "월별 수출입 현황",
+        caption: "수출입 추이",
+      },
     },
   ],
 } as const satisfies DocumentPreprocessorDemo;
 
+const DOCUMENT_REGION_MARKER_SIZE = 44;
+
+export function getDocumentRegionMarkerBounds(
+  region: DocumentRegion,
+  preview: { width: number; height: number }
+) {
+  const halfSize = DOCUMENT_REGION_MARKER_SIZE / 2;
+  const centerX = region.marker.point.x * preview.width;
+  const centerY = region.marker.point.y * preview.height;
+  return {
+    left: centerX - halfSize,
+    top: centerY - halfSize,
+    right: centerX + halfSize,
+    bottom: centerY + halfSize,
+  };
+}
+
 export interface DocumentPreprocessorState {
   isOpen: boolean;
-  previewRegion: DocumentRegionId | null;
+  hoveredRegion: DocumentRegionId | null;
+  focusedRegion: DocumentRegionId | null;
   pinnedRegion: DocumentRegionId | null;
 }
 
 export type DocumentPreprocessorEvent =
   | { type: "toggle" }
-  | { type: "preview"; region: DocumentRegionId }
-  | { type: "clear-preview" }
+  | { type: "hover"; region: DocumentRegionId }
+  | { type: "clear-hover" }
+  | { type: "focus"; region: DocumentRegionId }
+  | { type: "clear-focus" }
   | { type: "toggle-pin"; region: DocumentRegionId }
   | { type: "close" };
 
 export function getDocumentPreprocessorState(): DocumentPreprocessorState {
-  return { isOpen: false, previewRegion: null, pinnedRegion: null };
+  return {
+    isOpen: false,
+    hoveredRegion: null,
+    focusedRegion: null,
+    pinnedRegion: null,
+  };
+}
+
+export function getActiveDocumentRegion(
+  state: DocumentPreprocessorState
+): DocumentRegionId | null {
+  return state.focusedRegion ?? state.hoveredRegion ?? state.pinnedRegion;
 }
 
 export function reduceDocumentPreprocessorState(
@@ -127,11 +175,18 @@ export function reduceDocumentPreprocessorState(
   if (event.type === "toggle") {
     return state.isOpen
       ? getDocumentPreprocessorState()
-      : { isOpen: true, previewRegion: null, pinnedRegion: null };
+      : {
+          isOpen: true,
+          hoveredRegion: null,
+          focusedRegion: null,
+          pinnedRegion: null,
+        };
   }
   if (!state.isOpen) return state;
-  if (event.type === "preview") return { ...state, previewRegion: event.region };
-  if (event.type === "clear-preview") return { ...state, previewRegion: null };
+  if (event.type === "hover") return { ...state, hoveredRegion: event.region };
+  if (event.type === "clear-hover") return { ...state, hoveredRegion: null };
+  if (event.type === "focus") return { ...state, focusedRegion: event.region };
+  if (event.type === "clear-focus") return { ...state, focusedRegion: null };
   return {
     ...state,
     pinnedRegion: state.pinnedRegion === event.region ? null : event.region,

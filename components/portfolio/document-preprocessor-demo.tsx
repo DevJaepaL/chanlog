@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useReducer, useRef } from "react";
 import {
   documentPreprocessorDemo,
+  getActiveDocumentRegion,
   getDocumentPreprocessorState,
   reduceDocumentPreprocessorState,
   type DocumentRegion,
@@ -23,34 +24,6 @@ const accentBorderStyles = {
   purple: "border-accent-purple",
   sky: "border-accent-sky",
 };
-
-const sourceControlPlacements = {
-  title: { x: 0.84, y: 0.173, marker: "1" },
-  summary: { x: 0.16, y: 0.239, marker: "2" },
-  table: { x: 0.84, y: 0.554, marker: "3" },
-  chart: { x: 0.16, y: 0.83, marker: "4" },
-} as const satisfies Record<
-  DocumentRegionId,
-  { x: number; y: number; marker: string }
->;
-
-const SOURCE_CONTROL_SIZE = 44;
-
-export function getDocumentRegionSourceControlBounds(
-  region: DocumentRegionId,
-  preview: { width: number; height: number }
-) {
-  const placement = sourceControlPlacements[region];
-  const halfSize = SOURCE_CONTROL_SIZE / 2;
-  const centerX = placement.x * preview.width;
-  const centerY = placement.y * preview.height;
-  return {
-    left: centerX - halfSize,
-    top: centerY - halfSize,
-    right: centerX + halfSize,
-    bottom: centerY + halfSize,
-  };
-}
 
 function ResultContent({ region }: { region: DocumentRegion }) {
   const { result } = region;
@@ -119,11 +92,14 @@ export function DocumentPreprocessorDemo() {
     getDocumentPreprocessorState
   );
   const actionRef = useRef<HTMLButtonElement>(null);
-  const activeRegion = state.previewRegion ?? state.pinnedRegion;
+  const activeRegion = getActiveDocumentRegion(state);
 
-  const preview = (region: DocumentRegionId) =>
-    dispatch({ type: "preview", region });
-  const clearPreview = () => dispatch({ type: "clear-preview" });
+  const hover = (region: DocumentRegionId) =>
+    dispatch({ type: "hover", region });
+  const clearHover = () => dispatch({ type: "clear-hover" });
+  const focus = (region: DocumentRegionId) =>
+    dispatch({ type: "focus", region });
+  const clearFocus = () => dispatch({ type: "clear-focus" });
   const togglePin = (region: DocumentRegionId) =>
     dispatch({ type: "toggle-pin", region });
   const toggleOpen = () => {
@@ -192,27 +168,26 @@ export function DocumentPreprocessorDemo() {
                 })}
                 {documentPreprocessorDemo.regions.map((region) => {
                   const active = activeRegion === region.id;
-                  const placement = sourceControlPlacements[region.id];
                   return (
                     <button
                       key={region.id}
                       type="button"
                       aria-label={region.accessibleName}
                       aria-pressed={state.pinnedRegion === region.id}
-                      onMouseEnter={() => preview(region.id)}
-                      onMouseLeave={clearPreview}
-                      onFocus={() => preview(region.id)}
-                      onBlur={clearPreview}
+                      onMouseEnter={() => hover(region.id)}
+                      onMouseLeave={clearHover}
+                      onFocus={() => focus(region.id)}
+                      onBlur={clearFocus}
                       onClick={() => togglePin(region.id)}
                       style={{
-                        left: `${placement.x * 100}%`,
-                        top: `${placement.y * 100}%`,
+                        left: `${region.marker.point.x * 100}%`,
+                        top: `${region.marker.point.y * 100}%`,
                       }}
                       className={`absolute z-10 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-surface text-button text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none ${
                         accentBorderStyles[region.accent]
                       } ${active ? "outline outline-2 outline-primary" : ""}`}
                     >
-                      <span aria-hidden="true">{placement.marker}</span>
+                      <span aria-hidden="true">{region.marker.number}</span>
                     </button>
                   );
                 })}
@@ -233,10 +208,10 @@ export function DocumentPreprocessorDemo() {
                         type="button"
                         aria-label={region.accessibleName}
                         aria-pressed={state.pinnedRegion === region.id}
-                        onMouseEnter={() => preview(region.id)}
-                        onMouseLeave={clearPreview}
-                        onFocus={() => preview(region.id)}
-                        onBlur={clearPreview}
+                        onMouseEnter={() => hover(region.id)}
+                        onMouseLeave={clearHover}
+                        onFocus={() => focus(region.id)}
+                        onBlur={clearFocus}
                         onClick={() => togglePin(region.id)}
                         className={`flex min-h-11 w-full items-center gap-2 rounded-md text-left text-button text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none ${
                           active ? "outline outline-2 outline-primary" : ""
@@ -248,7 +223,7 @@ export function DocumentPreprocessorDemo() {
                             accentStyles[region.accent]
                           }`}
                         >
-                          {sourceControlPlacements[region.id].marker}
+                          {region.marker.number}
                         </span>
                         <span>{region.label}</span>
                       </button>
