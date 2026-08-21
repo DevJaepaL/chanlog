@@ -1,23 +1,18 @@
-import { About } from "@/components/home/about";
-import { CareerTimeline } from "@/components/home/career-timeline";
-import { Contact } from "@/components/home/contact";
-import { Hero } from "@/components/home/hero";
-import { ProjectList } from "@/components/home/project-list";
-import { RecentPosts } from "@/components/home/recent-posts";
-import { SkillGroups } from "@/components/home/skill-groups";
-import { PipelineSection } from "@/components/pipeline/pipeline-section";
+import type { Metadata } from "next";
+import { allPosts } from "contentlayer/generated";
+import { PostArchive } from "@/components/archive/post-archive";
+
+export const metadata: Metadata = {
+  title: "아카이브",
+  description: "백엔드·AI·데이터 파이프라인에 관한 이재찬의 기술 아카이브.",
+  alternates: {
+    canonical: "https://chanlog.blog/",
+  },
+  openGraph: {
+    url: "https://chanlog.blog/",
+  },
+};
 
 export default function Home() {
-  return (
-    <>
-      <Hero />
-      <About />
-      <CareerTimeline />
-      <ProjectList />
-      <PipelineSection />
-      <SkillGroups />
-      <RecentPosts />
-      <Contact />
-    </>
-  );
+  return <PostArchive posts={allPosts} />;
 }
