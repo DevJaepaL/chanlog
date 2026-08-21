@@ -1,7 +1,11 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { getDocumentRegionSourceControlBounds } from "@/components/portfolio/document-preprocessor-demo";
 import { DocumentPreprocessorSection } from "@/components/portfolio/document-preprocessor-section";
+import type { DocumentRegionId } from "@/lib/document-preprocessor";
+
+const REGION_IDS: DocumentRegionId[] = ["title", "summary", "table", "chart"];
 
 describe("DocumentPreprocessorSection", () => {
   it("renders the collapsed portfolio section from the shared demo contract", () => {
@@ -21,5 +25,35 @@ describe("DocumentPreprocessorSection", () => {
     expect(markup).not.toMatch(
       /Chroma|Elasticsearch|BGE|indexing|정확도|고객사|내부 네트워크/
     );
+  });
+
+  it("keeps every 44px source control inside the preview without overlap", () => {
+    for (const viewport of [
+      { width: 190, height: 269 },
+      { width: 450, height: 636 },
+    ]) {
+      const bounds = REGION_IDS.map((region) =>
+        getDocumentRegionSourceControlBounds(region, viewport)
+      );
+
+      for (const bound of bounds) {
+        expect(bound.left).toBeGreaterThanOrEqual(0);
+        expect(bound.top).toBeGreaterThanOrEqual(0);
+        expect(bound.right).toBeLessThanOrEqual(viewport.width);
+        expect(bound.bottom).toBeLessThanOrEqual(viewport.height);
+      }
+      for (let first = 0; first < bounds.length; first += 1) {
+        for (let second = first + 1; second < bounds.length; second += 1) {
+          const a = bounds[first];
+          const b = bounds[second];
+          const overlaps =
+            a.left < b.right &&
+            a.right > b.left &&
+            a.top < b.bottom &&
+            a.bottom > b.top;
+          expect(overlaps).toBe(false);
+        }
+      }
+    }
   });
 });

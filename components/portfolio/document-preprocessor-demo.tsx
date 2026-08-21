@@ -17,6 +17,41 @@ const accentStyles = {
   sky: "border-accent-sky bg-accent-sky/10",
 };
 
+const accentBorderStyles = {
+  orange: "border-accent-orange",
+  teal: "border-accent-teal",
+  purple: "border-accent-purple",
+  sky: "border-accent-sky",
+};
+
+const sourceControlPlacements = {
+  title: { x: 0.84, y: 0.173, marker: "1" },
+  summary: { x: 0.16, y: 0.239, marker: "2" },
+  table: { x: 0.84, y: 0.554, marker: "3" },
+  chart: { x: 0.16, y: 0.83, marker: "4" },
+} as const satisfies Record<
+  DocumentRegionId,
+  { x: number; y: number; marker: string }
+>;
+
+const SOURCE_CONTROL_SIZE = 44;
+
+export function getDocumentRegionSourceControlBounds(
+  region: DocumentRegionId,
+  preview: { width: number; height: number }
+) {
+  const placement = sourceControlPlacements[region];
+  const halfSize = SOURCE_CONTROL_SIZE / 2;
+  const centerX = placement.x * preview.width;
+  const centerY = placement.y * preview.height;
+  return {
+    left: centerX - halfSize,
+    top: centerY - halfSize,
+    right: centerX + halfSize,
+    bottom: centerY + halfSize,
+  };
+}
+
 function ResultContent({ region }: { region: DocumentRegion }) {
   const { result } = region;
   if (result.kind === "text") {
@@ -132,6 +167,33 @@ export function DocumentPreprocessorDemo() {
                 {documentPreprocessorDemo.regions.map((region) => {
                   const active = activeRegion === region.id;
                   return (
+                    <div
+                      key={`${region.id}-outline`}
+                      aria-hidden="true"
+                      style={{
+                        left: `${region.rect.x * 100}%`,
+                        top: `${region.rect.y * 100}%`,
+                        width: `${region.rect.width * 100}%`,
+                        height: `${region.rect.height * 100}%`,
+                      }}
+                      className={`pointer-events-none absolute rounded-xs border-2 transition-colors motion-reduce:transition-none ${
+                        accentStyles[region.accent]
+                      } ${
+                        active
+                          ? "outline outline-2 outline-offset-2 outline-primary"
+                          : ""
+                      }`}
+                    >
+                      <span className="absolute left-0 top-0 bg-surface px-1 text-eyebrow text-ink">
+                        {region.label}
+                      </span>
+                    </div>
+                  );
+                })}
+                {documentPreprocessorDemo.regions.map((region) => {
+                  const active = activeRegion === region.id;
+                  const placement = sourceControlPlacements[region.id];
+                  return (
                     <button
                       key={region.id}
                       type="button"
@@ -143,18 +205,14 @@ export function DocumentPreprocessorDemo() {
                       onBlur={clearPreview}
                       onClick={() => togglePin(region.id)}
                       style={{
-                        left: `${region.rect.x * 100}%`,
-                        top: `${region.rect.y * 100}%`,
-                        width: `${region.rect.width * 100}%`,
-                        height: `${region.rect.height * 100}%`,
+                        left: `${placement.x * 100}%`,
+                        top: `${placement.y * 100}%`,
                       }}
-                      className={`absolute min-h-11 min-w-11 rounded-xs border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none ${
-                        accentStyles[region.accent]
-                      } ${active ? "ring-2 ring-primary" : ""}`}
+                      className={`absolute z-10 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-surface text-button text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none ${
+                        accentBorderStyles[region.accent]
+                      } ${active ? "outline outline-2 outline-primary" : ""}`}
                     >
-                      <span className="absolute left-0 top-0 bg-surface px-1 text-eyebrow text-ink">
-                        {region.label}
-                      </span>
+                      <span aria-hidden="true">{placement.marker}</span>
                     </button>
                   );
                 })}
@@ -180,16 +238,18 @@ export function DocumentPreprocessorDemo() {
                         onFocus={() => preview(region.id)}
                         onBlur={clearPreview}
                         onClick={() => togglePin(region.id)}
-                        className={`flex min-h-11 w-full items-center gap-2 rounded-md text-left text-button text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary motion-reduce:transition-none ${
-                          active ? "ring-2 ring-primary" : ""
+                        className={`flex min-h-11 w-full items-center gap-2 rounded-md text-left text-button text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:ring-offset-surface motion-reduce:transition-none ${
+                          active ? "outline outline-2 outline-primary" : ""
                         }`}
                       >
                         <span
                           aria-hidden="true"
-                          className={`h-3 w-3 rounded-full border ${
+                          className={`flex h-6 w-6 items-center justify-center rounded-full border text-caption ${
                             accentStyles[region.accent]
                           }`}
-                        />
+                        >
+                          {sourceControlPlacements[region.id].marker}
+                        </span>
                         <span>{region.label}</span>
                       </button>
                       <ResultContent region={region} />
