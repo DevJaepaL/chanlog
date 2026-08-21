@@ -37,8 +37,9 @@ URL은 보존하고, 이전 글 목록 URL은 영구 리다이렉트로 호환�
 - 글 상세의 본문, TOC, MDX 렌더링 또는 글 슬러그 체계를 재작성하지 않는다.
 - 태그, 검색, 페이지네이션, 새 콘텐츠 모델, 새 애니메이션, 새 색상 팔레트,
   새 의존성을 추가하지 않는다.
-- Footer의 연락처, Hero의 Email/GitHub 링크, `lib/profile.ts`의 연락처 데이터는
-  변경하지 않는다.
+- Footer 자체의 구조·스타일·링크 렌더링 방식은 변경하지 않는다. 연락처 데이터의
+  `Email` 표시 라벨을 `Contact`로 바꾸는 결과는 Footer에도 공유 데이터로 반영된다.
+- Hero에 연락처 CTA를 남기거나, hamburger 메뉴·새 내비게이션 의존성을 추가하지 않는다.
 - `PipelineSection` 내부의 시연 내용, 상호작용, 공개 출처 귀속을 변경하지 않는다.
 - Contentlayer가 추적하는 생성 파일을 기능 변경으로 직접 편집하지 않는다.
 
@@ -79,27 +80,39 @@ App Router의 페이지는 얇게 유지한다. `/`는 서버 컴포넌트로서
 | `/posts` | 308 영구 리다이렉트 | `/` | — | 리다이렉트 후 `/` |
 | `/posts/[slug]` | 기존 글 상세 렌더 | `/posts/[slug]` | — | `/` |
 
-전역 내비게이션의 정확한 순서는 다음과 같다.
+Navbar는 전역 header 안에서 다음의 정확한 정보 구조를 제공한다.
 
-1. `아카이브` — `/`
-2. `포트폴리오` — `/portfolio`
-3. `파이프라인` — `/pipeline`
+| 화면 | 첫 영역/행 | 둘째 영역/행 |
+|---|---|---|
+| 데스크톱 (`sm` 이상) | 왼쪽: `CHANLOG` 로고(`/`) | 오른쪽: 페이지 탭 `아카이브`(`/`) → `포트폴리오`(`/portfolio`) → `파이프라인`(`/pipeline`), 미묘한 세로 divider, action 링크 `Contact` → `GitHub` |
+| 모바일 (기본) | 첫 행: 왼쪽 `CHANLOG` 로고(`/`), 오른쪽 `Contact` → `GitHub` action 링크 | 둘째 행: `아카이브` → `포트폴리오` → `파이프라인` 페이지 탭 |
 
-CHANLOG 로고는 항상 `/`로 연결한다. `/posts/[slug]`는 글 상세 중에도 `아카이브`를
-활성 상태로 보이게 한다. `/posts`는 서버에서 즉시 `/`로 이동하므로 사용자에게 독립적인
-활성 상태를 노출하지 않는다.
+페이지 탭의 순서와 href는 `아카이브`, `포트폴리오`, `파이프라인` 순서로 고정한다. divider는
+데스크톱에서만 페이지 탭과 action 링크를 구분하는 장식이며, 링크·탭·포커스 대상이 아니다.
+CHANLOG 로고는 항상 `/`로 연결한다. `/posts/[slug]`는 글 상세 중에도 `아카이브`를 활성
+상태로 보이게 한다. `/posts`는 서버에서 즉시 `/`로 이동하므로 사용자에게 독립적인 활성
+상태를 노출하지 않는다. `Contact`와 `GitHub`는 외부 action 링크이지 활성 경로 탭이 아니다.
 
 ### 5.2 내비게이션 경계
 
-`lib/navigation.ts`는 다음을 유일한 라우트 모델로 제공한다.
+`lib/navigation.ts`는 다음의 순수 계약을 제공한다.
 
 - `NAV_ITEMS`: 위 표 순서와 라벨을 가진 읽기 전용 항목 목록
 - `getActiveNavHref(pathname)`: `/`와 모든 `/posts/...`를 `/`로, `/portfolio`를
   `/portfolio`로, `/pipeline`을 `/pipeline`으로 반환한다. 그 밖의 경로는 활성 항목을
   반환하지 않는다.
+- `getHeaderContacts(contacts)`: 전달받은 공유 `ContactLink` 목록에서 라벨이 `Contact`,
+  `GitHub`인 항목만 그 순서대로 반환한다. 이 함수와 Navbar는 email/GitHub href 문자열을
+  재정의하지 않는다.
+- `getHeaderActionAttributes(contact)`: `Contact`에는 빈 속성 객체를 반환해 mailto 링크에
+  `target`/`rel`을 붙이지 않고, `GitHub`에는
+  `{ target: "_blank", rel: "noopener noreferrer" }`를 반환한다. 이 계약은 action의
+  새 창·보안 의미를 DOM 렌더러 없이 검사 가능하게 한다.
 
-`components/navbar.tsx`는 `usePathname()` 값을 이 헬퍼에 전달해 활성 클래스만 결정한다.
-경로 접두어 검사와 링크 목록을 Navbar 내부에 중복 정의하지 않는다.
+`components/navbar.tsx`는 `usePathname()` 값을 활성 경로 헬퍼에 전달하고, `contacts`를
+`getHeaderContacts(contacts)`에 전달해 action을 렌더링한다. Navbar 내부에 경로 접두어 검사,
+링크 목록, 또는 Contact/GitHub href 문자열을 중복 정의하지 않는다. action별 속성은
+`getHeaderActionAttributes`의 결과를 그대로 사용한다.
 
 ## 6. 페이지별 조립
 
@@ -121,8 +134,9 @@ CareerTimeline, ProjectList, PipelineSection, SkillGroups, RecentPosts, Contact�
 5. `SkillGroups`
 
 `PipelineSection`, `RecentPosts`, 페이지 수준 `Contact`는 포함하지 않는다. 전역
-`Footer`는 RootLayout의 공통 UI로 남고 연락처도 그대로 표시된다. Hero의 Email/GitHub도
-그대로 남는다.
+`Footer`는 RootLayout의 공통 UI로 남으며, 공유 데이터에 따른 `Contact`/`GitHub`/`Instagram`
+표시를 유지한다. `Hero`는 아바타·이름·직무·tagline만 가진 identity/content 영역이며
+Email/GitHub 버튼이나 연락처 import·매핑을 포함하지 않는다.
 
 ### `/pipeline` — 파이프라인 사례 연구
 
@@ -178,22 +192,25 @@ TOC, 제목·날짜·요약 및 현행 글별 Open Graph URL을 보존한다. �
 | `lib/posts.ts` | 정렬·썸네일 정규화의 순수 계약 | 생성 |
 | `lib/posts.test.ts` | 정렬과 CR/공백 썸네일 정규화의 선행 행동 테스트 | 생성 |
 | `lib/navigation.ts` | 정식 nav 모델과 활성 경로 해석 | 생성 |
-| `lib/navigation.test.ts` | 아카이브/포트폴리오/파이프라인/글 상세/미지 경로 매핑 테스트 | 생성 |
+| `lib/navigation.test.ts` | 탭 순서, 활성 경로, header 연락처 선택·action 속성 테스트 | 생성 |
+| `lib/profile.ts` | 공유 연락처의 `Email` → `Contact` 라벨 마이그레이션 | 수정 |
+| `lib/profile.test.ts` | 공유 Contact 라벨과 mailto href 보존 테스트 | 수정 |
 | `components/archive/post-archive.tsx` | 공용 아카이브 제목과 클릭 가능한 반응형 카드 목록 | 생성 |
 | `app/page.tsx` | 얇은 정식 아카이브 페이지 | 교체 |
 | `app/posts/page.tsx` | 영구 리다이렉트 전용 페이지 | 교체 |
 | `app/portfolio/page.tsx` | 얇은 다섯 섹션 포트폴리오 조립 | 생성 |
 | `app/pipeline/page.tsx` | 얇은 파이프라인 사례 연구 조립 | 생성 |
-| `components/navbar.tsx` | 공용 nav 모델·활성 헬퍼 소비 | 수정 |
+| `components/navbar.tsx` | 반응형 2행/데스크톱 header, 공용 nav·연락처 계약 소비 | 수정 |
+| `components/home/hero.tsx` | 연락처 import·선택·CTA 제거, identity/content 전용 유지 | 수정 |
 | `app/layout.tsx` | archive-first 전역 기본 메타데이터 | 수정 |
 | `app/sitemap.ts` | 정식 정적 라우트와 글 상세 URL만 노출 | 수정 |
 | `components/home/contact.tsx` | 페이지 수준 Contact의 유일한 구현 | 삭제 |
 | `components/home/recent-posts.tsx` | 포트폴리오에서 제거되는 최근 글 구현 | 삭제 |
 
-`components/footer.tsx`, `components/home/hero.tsx`, `components/pipeline/*`,
-`lib/profile.ts`, `lib/pipeline.ts`, `app/posts/[slug]/page.tsx`는 이 변경에서 내용을
-바꾸지 않는다. `content/*.mdx`, `contentlayer.config.ts`, 그리고 `.contentlayer/**` 생성
-파일도 기능 구현 대상으로 삼지 않는다.
+`components/footer.tsx`, `components/pipeline/*`, `lib/pipeline.ts`,
+`app/posts/[slug]/page.tsx`는 이 변경에서 내용을 바꾸지 않는다. Footer의 `Contact` 표시는
+수정된 공유 `contacts` 데이터에서 자동으로 나온다. `content/*.mdx`, `contentlayer.config.ts`,
+그리고 `.contentlayer/**` 생성 파일도 기능 구현 대상으로 삼지 않는다.
 
 ## 9. 메타데이터, SEO, 사이트맵
 
@@ -235,6 +252,16 @@ TOC, 제목·날짜·요약 및 현행 글별 Open Graph URL을 보존한다. �
 - 모바일에서 이미지는 제목보다 앞에 오지만 의미상 중복 장식이므로 읽기 순서를 해치지
   않는다. `sm` 이상에서는 고정 폭 썸네일과 유연한 텍스트 열이 좁은 화면에서 넘치지
   않도록 한다.
+- Navbar는 sticky 동작과 기존 토큰을 유지한다. 기본 폭에서는 첫 행의 로고와 Contact/GitHub
+  action, 둘째 행의 세 페이지 탭을 분리해 가로 overflow를 만들지 않는다. `sm` 이상에서는
+  한 행의 로고·탭·divider·action 구성이 된다. 모든 로고, 탭, action 링크에는 식별 가능한
+  `focus-visible` 스타일과 실용적인 최소 44px 높이의 터치 대상(필요한 padding 포함)을
+  제공한다.
+- `Contact` action은 같은 창의 `mailto:` 링크라서 `target`과 `rel`을 설정하지 않는다.
+  `GitHub` action은 새 창의 외부 링크라서 정확히 `target="_blank"` 및
+  `rel="noopener noreferrer"`를 가진다. action은 active tab 클래스를 받지 않는다.
+- Hero는 버튼이 없는 identity/content 영역으로 남아, 동일한 Contact/GitHub action이
+  본문과 header에 중복 노출되지 않는다.
 - 2026-08-07 설계의 `Section` fade-up(400ms, `y: 12px`)과 reduced-motion 존중 규칙은
   포트폴리오와 파이프라인에 그대로 적용된다. 아카이브 카드는 새 진입·스크롤·시차
   애니메이션을 추가하지 않고 기존 hover shadow transition만 사용한다.
@@ -257,16 +284,17 @@ TOC, 제목·날짜·요약 및 현행 글별 Open Graph URL을 보존한다. �
 red → green 사이클이다.
 
 1. `lib/posts.test.ts`에 날짜 내림차순·동일 날짜 slug 보조 정렬, 입력 배열 비변경,
-   `undefined`, 공백, `\r`/`\n`이 붙은 썸네일의 정규화 행동을 작성한다. 테스트가
-   `lib/posts.ts` 부재 또는 미구현으로 실패함을 `npm test -- lib/posts.test.ts`로 확인한다.
-2. 최소 `lib/posts.ts`를 구현하고 같은 명령이 통과함을 확인한다.
-3. `lib/navigation.test.ts`에 세 nav 항목의 정확한 순서/라벨/href와 `/`, `/posts`,
-   `/posts/[slug]`, `/portfolio`, `/pipeline`, 알 수 없는 경로의 활성 매핑을 작성한다.
-   `npm test -- lib/navigation.test.ts`가 구현 전 실패함을 확인한다.
-4. 최소 `lib/navigation.ts`를 구현하고 같은 명령이 통과함을 확인한다.
-5. `PostArchive`, 각 얇은 페이지, `/posts` 영구 리다이렉트, Navbar, 메타데이터,
-   sitemap을 구현한다. 이어서 고아 import가 남지 않게 `Contact`와 `RecentPosts`를 삭제한다.
-6. 모든 검증과 수동/정적 점검을 수행한 뒤에만 커밋한다.
+   `undefined`, 공백, `\r`/`\n`이 붙은 썸네일의 정규화 행동을 작성한다. `lib/profile.test.ts`
+   및 `lib/navigation.test.ts`에는 `Email` → `Contact` 데이터 마이그레이션, 세 페이지 탭의
+   정확한 순서/라벨/href, `/`, `/posts`, `/posts/[slug]`, `/portfolio`, `/pipeline`, 알 수 없는
+   경로의 활성 매핑, 공유 header 연락처의 선택/순서 및 action target 의미를 작성한다.
+   구현 전 대상 테스트가 실패함을 확인한다.
+2. 최소 `lib/posts.ts`, `lib/navigation.ts`, `lib/profile.ts` 변경을 구현하고 대상 테스트가
+   통과함을 확인한다.
+3. `PostArchive`, 각 얇은 페이지, `/posts` 영구 리다이렉트, Navbar의 responsive/action
+   layout, Hero CTA 제거, 메타데이터, sitemap을 구현한다. 이어서 고아 import가 남지 않게
+   `Contact`와 `RecentPosts`를 삭제한다.
+4. 모든 검증과 수동/정적 점검을 수행한 뒤에만 커밋한다.
 
 이 저장소의 Vitest 설정은 `lib/**/*.test.ts`를 Node 환경에서 실행하므로 순수 헬퍼 테스트는
 DOM 도구나 새 테스트 의존성 없이 유지한다. UI 렌더링은 기존 프로젝트에 테스트 인프라가
@@ -297,7 +325,7 @@ npm run build
 |---|---|
 | `/` | `아카이브` 목록과 네 개의 이미지 URL이 렌더되며 각 카드는 해당 `/posts/[slug]` 링크다. |
 | `/posts` | `Location: /`와 영구 308 리다이렉트다. |
-| `/portfolio` | Hero, About, CareerTimeline, ProjectList, SkillGroups는 있고 Pipeline/최근 글/페이지 Contact는 없다. Footer 연락처와 Hero Email/GitHub는 있다. |
+| `/portfolio` | 정확히 Hero, About, CareerTimeline, ProjectList, SkillGroups가 있고 Pipeline/최근 글/페이지 Contact는 없다. Hero에는 버튼이 없고, 전역 Navbar는 Contact/GitHub action을 제공하며 Footer는 Contact/GitHub/Instagram을 표시한다. |
 | `/pipeline` | 기존 파이프라인 제목, 상호작용용 마크업, 공개 출처 귀속이 존재한다. |
 | `/posts/[slug]` | 기존 글 제목, 본문/TOC, 정식 article OG URL이 그대로다. |
 | `/sitemap.xml` | `/`, `/portfolio`, `/pipeline`, 각 글 상세는 있고 `/posts` 단독 항목은 없다. |
@@ -305,7 +333,8 @@ npm run build
 ### 반응형·시각 QA
 
 브라우저 플러그인이 정상 동작하면 모바일 폭과 `sm` 이상 폭에서 아카이브 카드, 포커스
-표시, 썸네일 crop, 썸네일 없는 카드의 전폭 텍스트, nav 활성 상태를 직접 확인한다.
+표시, 썸네일 crop, 썸네일 없는 카드의 전폭 텍스트, sticky Navbar의 2행/데스크톱 1행 전환,
+44px 실용 터치 대상, 페이지 탭 활성 상태와 Contact/GitHub action 의미를 직접 확인한다.
 신뢰된 경로 bootstrap 실패가 알려진 플러그인 제약이므로 실패 시에는 빌드된 HTML과
 HTTP 응답으로 위의 구조·링크·이미지 조건을 확인하고, CSS 실제 렌더링과 키보드 포커스의
 시각적 외관은 잔여 위험으로 명시한다.
@@ -317,8 +346,11 @@ HTTP 응답으로 위의 구조·링크·이미지 조건을 확인하고, CSS �
 - `/posts/[slug]` 링크는 변경하지 않는다.
 - `components/home/contact.tsx`와 `components/home/recent-posts.tsx`는 남은 import가
   없음을 검색한 뒤 삭제한다.
-- Footer와 `contacts` 데이터는 남는다. 연락처 UI를 이동하거나 데이터 모델을 변경하지
-  않는다.
+- Footer는 남고 파일 자체는 변경하지 않는다. `contacts` 데이터의 첫 라벨만 `Email`에서
+  `Contact`로 변경되므로 Footer는 공유 데이터로 `Contact`/`GitHub`/`Instagram`을 표시한다.
+- Hero에서는 contacts import, Email/GitHub 선택 로직, CTA 버튼을 제거한다. 전역 Navbar가
+  공유 contacts에서 Contact/GitHub action을 선택하므로 email/GitHub href를 다른 파일에
+  복제하지 않는다.
 - `content/*.mdx`와 `.contentlayer/**`를 썸네일 정규화 문제의 해결책으로 수정하지 않는다.
 - 작업 트리에 존재하는 무관한 `.contentlayer` 생성 변경이나 ignored nested `birthday-gf`
   저장소는 이 작업의 범위 밖이며, 검사·복원·커밋에서 보존한다.
@@ -335,11 +367,18 @@ HTTP 응답으로 위의 구조·링크·이미지 조건을 확인하고, CSS �
 - [ ] `/posts`는 308 영구 리다이렉트로 `/`에 도착하고 `/posts/[slug]` 상세는 그대로
   렌더된다.
 - [ ] `/portfolio`는 정확히 Hero, About, CareerTimeline, ProjectList, SkillGroups만
-  페이지 본문에 조립한다. Footer와 Hero 연락처는 남고 Pipeline/최근 글/페이지 Contact는
-  없다.
+  페이지 본문에 조립한다. Hero는 identity/content만 표시하고 버튼·contacts import가 없으며,
+  Pipeline/최근 글/페이지 Contact는 없다. 전역 Footer는 Contact/GitHub/Instagram을 표시한다.
 - [ ] `/pipeline`은 기존 `PipelineSection`과 기존 상호작용·공개 출처 귀속을 제공한다.
-- [ ] Navbar의 링크/순서는 `아카이브`(`/`), `포트폴리오`(`/portfolio`),
-  `파이프라인`(`/pipeline`)이고, 로고는 `/`이며 글 상세에서는 아카이브가 활성이다.
+- [ ] Navbar는 데스크톱에서 왼쪽 CHANLOG(`/`), 오른쪽 `아카이브`(`/`) →
+  `포트폴리오`(`/portfolio`) → `파이프라인`(`/pipeline`) → 미묘한 divider → Contact → GitHub
+  순서이며, 모바일에서는 로고+Contact/GitHub 첫 행과 세 페이지 탭 둘째 행으로 overflow 없이
+  전환한다. 모든 링크는 keyboard focus와 44px 실용 터치 대상을 유지한다.
+- [ ] Navbar action은 공유 `contacts`에서 Contact/GitHub href를 가져오며 Contact는 target 없이
+  `mailto:`를 열고 GitHub만 `_blank` 및 `noopener noreferrer`를 사용한다. action은 활성 탭이
+  아니다.
+- [ ] `lib/profile.ts`의 표시 라벨은 `Contact`이고, mailto href는 유지되며 Footer는 파일 수정
+  없이 Contact/GitHub/Instagram을 표시한다.
 - [ ] 전역과 페이지별 metadata가 archive-first 정체성 및 각 페이지의 정식 URL을 반영하고,
   글 상세 article OG URL은 변하지 않는다.
 - [ ] sitemap에는 `/`, `/portfolio`, `/pipeline`, 글 상세만 있고 `/posts`는 없다.
