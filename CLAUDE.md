@@ -2,7 +2,7 @@
 
 ## 개요
 
-이재찬의 포트폴리오 사이트 겸 블로그입니다. Next.js 14 App Router로 구성되며, 홈은 얇은 조립 레이어로 포트폴리오 섹션을 렌더링하고 블로그는 별도 라우트로 제공합니다.
+이재찬의 기술 아카이브 겸 포트폴리오 사이트입니다. Next.js 14 App Router로 구성되며, `/`는 썸네일 글 아카이브, `/portfolio`는 포트폴리오, `/pipeline`은 문서 전처리 파이프라인, `/posts/[slug]`는 글 상세를 제공합니다.
 
 ## 명령어
 
@@ -14,8 +14,8 @@
 ## 스택과 구조
 
 - Next.js 14 App Router, TypeScript, Tailwind CSS 3, contentlayer2/MDX, framer-motion, Vitest
-- `app/`: 라우트와 얇은 홈 조립 코드
-- `components/home`, `components/pipeline`, `components/ui`: 홈 섹션, 파이프라인 시연, 공용 UI
+- `app/`: 아카이브·포트폴리오·파이프라인·글 상세 라우트와 얇은 페이지 조립 코드
+- `components/home`, `components/pipeline`, `components/ui`: 포트폴리오 섹션, 파이프라인 시연, 공용 UI
 - `lib/profile.ts`, `lib/pipeline.ts`, `lib/accent.ts`: 포트폴리오와 파이프라인 데이터·타입·색상 매핑
 - `content/`: MDX 블로그 글
 

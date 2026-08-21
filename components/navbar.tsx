@@ -30,6 +30,7 @@ function Navbar() {
             <li key={href}>
               <Link
                 href={href}
+                aria-current={activeHref === href ? "page" : undefined}
                 className={`inline-flex min-h-11 items-center px-2 text-body-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ${
                   activeHref === href
                     ? "font-semibold text-primary"
