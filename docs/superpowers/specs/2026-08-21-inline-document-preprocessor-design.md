@@ -110,7 +110,7 @@ header, sitemap, canonical 및 어떤 랜딩 메타데이터에도 남기지 않
 | region | 오른쪽 semantic result |
 |---|---|
 | 문서 제목 | `2026년 7월 수출입 현황 [확정치]` |
-| 요약 | `수출 990억 달러, 전년 동월 대비 14.4% 증가` · `무역수지 304억 달러 흑자` · `수출 14개월 연속 증가` |
+| 요약 | `수출 990억 달러, 전년 동월 대비 63.0% 증가` · `무역수지 304억 달러 흑자` · `수출 14개월 연속 증가` |
 | 표 | 원본의 `수출`, `수입` 두 행과 `구분`, `2026년 7월`, `전년 동월 대비` 열만 보이는 작은 표 추출 |
 | 차트 | 원본 차트의 `월별 수출입 현황` 레이블과 짧은 `수출입 추이` 캡션 |
 
@@ -164,20 +164,21 @@ canonical landing route를 남기지 않는다.
 ## 10. 테스트와 인수 기준
 
 1. TDD로 `lib/document-preprocessor.test.ts`를 먼저 작성한다. 네 region id의 유효성, 데이터의
-   중복 없는 label/content, toggle·preview·pin·unpin·close 상태 전이와 close 뒤 focus target을
-   Node Vitest에서 고정한다. 구현 전 실패와 최소 구현 뒤 통과를 확인한다.
+   중복 없는 label/content, toggle·preview·pin·unpin·close 상태 전이와 close 뒤 열린 여부,
+   preview region, pinned region의 초기화를 Node Vitest에서 고정한다. 구현 전 실패와 최소 구현
+   뒤 통과를 확인한다.
 2. component/runtime 검증에서 접힌 카드가 hover로 열리지 않고 action click/keyboard만으로
    열림을 바꾸는지, action의 `aria-expanded`/`aria-controls`, 네 button의 accessible name과
-   `aria-pressed`, focus-visible 및 reduced-motion 동작을 확인한다.
+   `aria-pressed`, close 뒤 action으로의 focus 복원, focus-visible 및 reduced-motion 동작을
+   확인한다.
 3. 개발 서버 HTTP 확인에서 `/pipeline`이 308이며 Location이 fragment를 보존하는지 확인한다.
    `/portfolio#document-preprocessor` 직접 접근은 해당 섹션을 보이게 하고 포트폴리오 탭을
    활성화해야 한다. `/posts/[slug]`는 계속 렌더된다.
 4. 데스크톱과 모바일의 실제 시각 QA에서 PDF 1쪽 derivative, 네 영역의 source/result 동기화,
    모바일 세로 순서, 교차 connector 부재, 읽을 수 있는 표·차트, 키보드 탭 순서를 확인한다.
-5. Contentlayer 생성물이 오래되었거나 타입이 불일치하면 개발 서버를 멈춘 상태에서
-   `Remove-Item -LiteralPath .contentlayer -Recurse -Force`로 **오직** `.contentlayer`만 삭제하고
-   다시 생성한다. 생성물을 직접 편집하지 않으며 `birthday-gf`는 이 명령과 모든 변경 대상에서
-   제외한다.
+5. 빌드가 Contentlayer 생성물을 바꾸면 정확히 변경된 생성 경로를 inspect하고, 그 diff만
+   기계적으로 되돌린다. 생성물을 직접 편집하지 않으며 broad restore, recursive deletion,
+   `git clean`, `git reset`은 사용하지 않는다. 중첩 `birthday-gf`는 모든 변경 대상에서 제외한다.
 6. 전체 `npm test`, `npx tsc --noEmit`, `npm run build`를 실행한다. 빌드 후 `git status`에서
    이 기능의 source/asset 외 Contentlayer 생성물이나 `birthday-gf` 변경이 남지 않아야 한다.
 
