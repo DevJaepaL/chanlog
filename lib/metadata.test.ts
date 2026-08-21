@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+import { metadata as portfolioMetadata } from "@/app/portfolio/page";
 import { createLandingMetadata } from "@/lib/metadata";
 
 describe("landing page metadata", () => {
@@ -33,6 +34,22 @@ describe("landing page metadata", () => {
       });
     }
   );
+
+  it("binds the portfolio page export to its complete metadata contract", () => {
+    expect(portfolioMetadata).toEqual({
+      title: "포트폴리오",
+      description: "이재찬의 백엔드·AI 엔지니어 경력, 프로젝트, 기술 역량",
+      alternates: { canonical: "https://chanlog.blog/portfolio" },
+      openGraph: {
+        title: "포트폴리오",
+        description: "이재찬의 백엔드·AI 엔지니어 경력, 프로젝트, 기술 역량",
+        url: "https://chanlog.blog/portfolio",
+        locale: "ko_KR",
+        type: "website",
+        siteName: "Chanlog",
+      },
+    });
+  });
 
   it("keeps portfolio canonical metadata and removes pipeline landing metadata", () => {
     const portfolioPage = readFileSync(
