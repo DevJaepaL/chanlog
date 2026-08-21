@@ -2,28 +2,30 @@
 
 ## 개요
 
-이재찬의 기술 아카이브 겸 포트폴리오 사이트입니다. Next.js 14 App Router로 구성되며, `/`는 썸네일 글 아카이브, `/portfolio`는 포트폴리오, `/pipeline`은 문서 전처리 파이프라인, `/posts/[slug]`는 글 상세를 제공합니다.
+이재찬의 기술 아카이브 겸 포트폴리오 사이트입니다. Next.js 14 App Router로 구성되며, `/`는 썸네일 글 아카이브, `/portfolio`는 인라인 문서 전처리기 사례를 포함한 포트폴리오, `/posts/[slug]`는 글 상세를 제공합니다. 기존 `/pipeline`은 페이지가 아니라 `/portfolio#document-preprocessor`로 이동하는 308 영구 redirect입니다. `/pipeline`에는 별도 canonical, 내비게이션, sitemap 항목이 없습니다.
 
 ## 명령어
 
-- `npm run dev` — 개발 서버 실행 (`.claude/launch.json`에는 `chanlog` 이름으로 등록됨)
-- `npm run build` — 프로덕션 빌드
-- `npm test` — Vitest 테스트 실행
-- `npx tsc --noEmit` — TypeScript 검사
+- `& 'C:\Users\META06\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' '.\node_modules\next\dist\bin\next' dev` — 개발 서버 실행
+- `& 'C:\Users\META06\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' '.\node_modules\next\dist\bin\next' build` — 프로덕션 빌드
+- `& 'C:\Users\META06\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' '.\node_modules\vitest\vitest.mjs' run` — Vitest 테스트 실행
+- `& 'C:\Users\META06\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' '.\node_modules\typescript\bin\tsc' --noEmit` — TypeScript 검사
 
 ## 스택과 구조
 
 - Next.js 14 App Router, TypeScript, Tailwind CSS 3, contentlayer2/MDX, framer-motion, Vitest
-- `app/`: 아카이브·포트폴리오·파이프라인·글 상세 라우트와 얇은 페이지 조립 코드
-- `components/home`, `components/pipeline`, `components/ui`: 포트폴리오 섹션, 파이프라인 시연, 공용 UI
-- `lib/profile.ts`, `lib/pipeline.ts`, `lib/accent.ts`: 포트폴리오와 파이프라인 데이터·타입·색상 매핑
+- `app/`: 아카이브·포트폴리오·글 상세 라우트와 얇은 페이지 조립 코드
+- `components/home`, `components/portfolio`, `components/ui`: 포트폴리오 섹션, 인라인 문서 전처리기 시연, 공용 UI
+- `components/portfolio/document-preprocessor-section.tsx`: 섹션 shell과 접힌 카드 조립
+- `components/portfolio/document-preprocessor-demo.tsx`: client toggle·preview·pin 상호작용
+- `lib/profile.ts`, `lib/document-preprocessor.ts`, `lib/accent.ts`: 프로필 데이터, 인라인 데모 데이터·상태 계약, 색상 매핑
 - `content/`: MDX 블로그 글
 
-경력·프로젝트·스킬·파이프라인 콘텐츠는 컴포넌트가 아닌 `lib/profile.ts`와 `lib/pipeline.ts`에서만 수정합니다. 해당 데이터 소유 규칙을 검증하는 integrity 테스트가 있습니다.
+경력·프로젝트·스킬 데이터는 `lib/profile.ts`에서만 수정합니다. 인라인 데모의 카피, 이미지 경로, 출처, 영역 좌표, semantic result, 상태 계약은 `lib/document-preprocessor.ts`에서만 수정합니다. 컴포넌트에 이 데이터를 중복하지 않습니다.
 
 ## 디자인 규칙
 
-디자인의 기준 문서는 `DESIGN.md`와 `docs/superpowers/specs/2026-08-07-portfolio-redesign-design.md`입니다.
+디자인의 기준 문서는 `DESIGN.md`, `docs/superpowers/specs/2026-08-07-portfolio-redesign-design.md`, `docs/superpowers/specs/2026-08-21-inline-document-preprocessor-design.md`입니다. 마지막 문서는 두 이전 설계의 독립 파이프라인 섹션만 제한적으로 대체하며, 아카이브·공통 디자인·안전성 규칙은 계속 적용됩니다.
 
 - 임의 색상·그림자·타이포그래피 대신 Tailwind 디자인 토큰만 사용합니다.
 - `primary`는 CTA·링크·포커스·활성 선택 상태와 명시된 `badge-pill` 컴포넌트에만, `secondary`는 Hero에만 사용합니다.
@@ -36,4 +38,4 @@
 
 ## 포트폴리오 안전성
 
-범용 OSS 스택, 설계 방법론, 공개 자료 기반 데모는 기재할 수 있습니다. 고객 문서·샘플, 처리 건수·규모·정확도, 내부 아키텍처·명세·네트워크, 확신 없는 기술 세부값은 기재하지 않습니다. 파이프라인은 고객사명을 제외한 방법론 시연으로만 다룹니다.
+범용 OSS 스택, 설계 방법론, 공개 자료 기반 데모는 기재할 수 있습니다. 고객 문서·샘플, 처리 건수·규모·정확도, 내부 아키텍처·명세·네트워크, 확신 없는 기술 세부값은 기재하지 않습니다. 문서 전처리기 데모는 공개 자료인 관세청 PDF 1쪽의 단일 derivative만 사용하고, 고객·내부·정량 주장을 만들지 않습니다. `Chroma`, `Elasticsearch`, `BGE`, indexing 등 금지된 기술 상세도 이 데모에 추가하지 않습니다.

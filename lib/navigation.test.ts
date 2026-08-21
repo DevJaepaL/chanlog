@@ -12,16 +12,15 @@ describe("navigation contracts", () => {
     expect(NAV_ITEMS).toEqual([
       { label: "아카이브", href: "/" },
       { label: "포트폴리오", href: "/portfolio" },
-      { label: "파이프라인", href: "/pipeline" },
     ]);
   });
 
-  it("maps archive and post paths to the archive tab", () => {
+  it("maps only rendered archive/post/portfolio paths", () => {
     expect(getActiveNavHref("/")).toBe("/");
     expect(getActiveNavHref("/posts")).toBe("/");
     expect(getActiveNavHref("/posts/my-first-post")).toBe("/");
     expect(getActiveNavHref("/portfolio")).toBe("/portfolio");
-    expect(getActiveNavHref("/pipeline")).toBe("/pipeline");
+    expect(getActiveNavHref("/pipeline")).toBeUndefined();
     expect(getActiveNavHref("/missing")).toBeUndefined();
   });
 

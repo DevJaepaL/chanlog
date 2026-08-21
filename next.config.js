@@ -11,6 +11,11 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        source: "/pipeline",
+        destination: "/portfolio#document-preprocessor",
+        permanent: true,
+      },
     ];
   },
 };
