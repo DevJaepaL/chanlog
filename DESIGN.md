@@ -7,6 +7,7 @@ colors:
   primary: "#0075de"
   primary-active: "#005bab"
   secondary: "#213183"
+  chrome: "#172554"
   on-primary: "#ffffff"
   canvas: "#ffffff"
   canvas-soft: "#f6f5f4"
@@ -113,8 +114,8 @@ spacing:
 
 components:
   nav-bar:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.chrome}"
+    textColor: "{colors.on-primary}"
     typography: "{typography.body-sm}"
     padding: 16px
   button-primary:
@@ -180,8 +181,8 @@ components:
     typography: "{typography.display-1}"
     padding: 32px
   footer:
-    backgroundColor: "{colors.canvas-soft}"
-    textColor: "{colors.ink-secondary}"
+    backgroundColor: "{colors.chrome}"
+    textColor: "rgba(255, 255, 255, 0.75)"
     typography: "{typography.caption}"
     padding: 32px
 
@@ -253,7 +254,7 @@ components:
 
 Notion looks like a well-organized desk in good daylight. The dominant surface is not pure white but a warm, paper-soft off-white — `{colors.canvas-soft}` (#f6f5f4) — that takes the clinical edge off the screen and makes long pages feel like a document rather than an app. Type is set in `NotionInter` (a tuned Inter) in near-black `{colors.ink}` at large, tightly-tracked weights, so headlines read as confident statements with very little letter-spacing slack at display sizes (`{typography.display-1}` pulls −2.125px of tracking at 64px). The whole system whispers in greys and blacks, then says exactly one thing in colour: a single, dependable blue, `{colors.primary}` (#0075de), reserved almost entirely for the primary call-to-action and inline links.
 
-Against that quiet chrome, Notion lets a **playful multi-colour sticker palette** carry all of the brand's personality — purple, pink, orange, teal, green and sky-blue appear as small illustrated blocks, app-icon stickers, and category dots scattered through the marketing pages. These colours never structure the layout or paint a CTA; they decorate. The discipline is deliberate: the interface stays monochrome-plus-blue so the content (and the cheerful illustrations) can breathe. The one exception to the bright daylight is the homepage hero, which inverts into a deep indigo "night" band (`{colors.secondary}`) with white type and glowing sticker constellations — a single dark island in an otherwise light document.
+Against that quiet chrome, Notion lets a **playful multi-colour sticker palette** carry all of the brand's personality — purple, pink, orange, teal, green and sky-blue appear as small illustrated blocks, app-icon stickers, and category dots scattered through the marketing pages. These colours never structure the layout or paint a CTA; they decorate. The discipline is deliberate: the interface stays monochrome-plus-blue so the content (and the cheerful illustrations) can breathe. The one exception to the bright daylight is the homepage hero, which inverts into a deep indigo "night" band (`{colors.secondary}`) with white type and glowing sticker constellations. User-directed site chrome is a second, deliberately narrow exception: the persistent navbar and footer use navy `{colors.chrome}` (#172554), leaving the document body and Hero palette unchanged.
 
 Surfaces are defined by hairlines and the faintest layered shadows rather than heavy elevation. Cards round at a friendly 12px (`{rounded.lg}`), the marketing CTAs are fully-pill-shaped (`{rounded.full}`), and utility buttons round at a tighter 8px (`{rounded.md}`). Nothing is loud; the brand's character comes from restraint plus one well-placed splash of joy.
 
@@ -264,7 +265,7 @@ Surfaces are defined by hairlines and the faintest layered shadows rather than h
 - A decorative-only multi-colour sticker palette (`{colors.accent-purple}`, `{colors.accent-pink}`, `{colors.accent-orange}`, `{colors.accent-teal}`, `{colors.accent-green}`, `{colors.accent-sky}`) that adds personality without ever painting structure
 - Pill-shaped marketing CTAs (`{rounded.full}`) contrasted with 8px utility buttons (`{rounded.md}`)
 - Elevation by hairline + barely-there layered shadow, not heavy drop-shadows
-- A single dark indigo hero "night" band (`{colors.secondary}`) inverting the otherwise daylight page rhythm
+- A single dark indigo hero "night" band (`{colors.secondary}`) inverting the otherwise daylight page rhythm, plus the user-directed navbar/footer chrome exception `{colors.chrome}`
 
 ## Colors
 
@@ -285,8 +286,9 @@ The remaining colours form Notion's **decorative sticker palette** — they appe
 - **Sticker Brown** (`{colors.accent-brown}` — #523410)
 
 ### Surface
-- **White** (`{colors.canvas}` / `{colors.surface}` — #ffffff): card and panel surfaces, nav bar, form fields.
-- **Warm Paper** (`{colors.canvas-soft}` — #f6f5f4): the signature page canvas and the footer band — a warm off-white that gives the whole site its document-like calm.
+- **White** (`{colors.canvas}` / `{colors.surface}` — #ffffff): card and panel surfaces, and form fields.
+- **Warm Paper** (`{colors.canvas-soft}` — #f6f5f4): the signature page canvas that gives the whole site its document-like calm.
+- **Chrome** (`{colors.chrome}` — #172554): the user-directed navbar/footer band; it inverts its wordmark and active navigation to white, while secondary links sit at 75% white and copyright at 60% white.
 - **Hairline** (`{colors.hairline}` — #e6e6e6): 1px card borders and dividers, a black-at-10%-on-white blend kept solid for token reuse.
 
 ### Text
@@ -393,7 +395,7 @@ Product screenshots are framed in rounded `{rounded.lg}` / `{rounded.xl}` wells,
 ### Navigation
 
 **`nav-bar`** — Top navigation
-- White surface `{colors.canvas}`, `{colors.ink}` link text at `{typography.body-sm}`, padding `{spacing.md}`. Sits as a slim sticky bar; left wordmark, centre product/solutions menu links, right "Log in" text link plus a `button-utility` "Get Notion free" CTA. Condenses to a hamburger below the tablet breakpoint.
+- Navy `{colors.chrome}` surface with a `rgba(255,255,255,0.15)` boundary; white wordmark and active link, 75%-white inactive/action links at `{typography.body-sm}`, padding `{spacing.md}`. White keyboard focus rings use the chrome as their offset. It remains a slim sticky bar with the left wordmark, centre links and right actions.
 
 ### Buttons
 
@@ -435,13 +437,13 @@ Product screenshots are framed in rounded `{rounded.lg}` / `{rounded.xl}` wells,
 ### Signature Components
 
 **`hero-band`** — Dark "night" hero
-- Full-bleed deep indigo `{colors.secondary}` band carrying `{typography.display-1}` white headline, sticker-constellation field, and a `button-primary` + `button-secondary` CTA pair. The single inverted dark island in an otherwise daylight page.
+- Full-bleed deep indigo `{colors.secondary}` band carrying `{typography.display-1}` white headline, sticker-constellation field, and a `button-primary` + `button-secondary` CTA pair. Its content styling is unchanged; the global navbar/footer chrome exception does not alter the Hero.
 
 **`badge-pill`** — Eyebrow / category pill
 - White surface `{colors.surface}`, `{colors.primary}` text, `{typography.eyebrow}` (12px / 600), fully pill `{rounded.full}`, padding `4px 8px`. Small labels such as the pricing "Essential for staying organized" eyebrow and category tags.
 
 **`footer`** — Site footer
-- Warm `{colors.canvas-soft}` band, `{colors.ink-secondary}` link text at `{typography.caption}`, padding `{spacing.xxl}`. Multi-column link directory closing every page.
+- Navy `{colors.chrome}` band with a `rgba(255,255,255,0.15)` top boundary, 75%-white links and 60%-white copyright at `{typography.caption}`, padding `{spacing.xxl}`. White keyboard focus rings use the chrome as their offset.
 
 ### Examples (illustrative)
 

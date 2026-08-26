@@ -1,6 +1,7 @@
 import { allPosts } from "contentlayer/generated";
 import { PostArchive } from "@/components/archive/post-archive";
 import { createLandingMetadata } from "@/lib/metadata";
+import { toArchivePost } from "@/lib/posts";
 
 export const metadata = createLandingMetadata({
   title: "아카이브",
@@ -9,5 +10,5 @@ export const metadata = createLandingMetadata({
 });
 
 export default function Home() {
-  return <PostArchive posts={allPosts} />;
+  return <PostArchive posts={allPosts.map(toArchivePost)} />;
 }

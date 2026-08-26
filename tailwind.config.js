@@ -10,6 +10,7 @@ module.exports = {
       colors: {
         primary: { DEFAULT: "#0075de", active: "#005bab" },
         secondary: "#213183",
+        chrome: "#172554",
         canvas: { DEFAULT: "#ffffff", soft: "#f6f5f4" },
         surface: "#ffffff",
         ink: {
