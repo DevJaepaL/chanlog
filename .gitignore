@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 .omc
+/birthday-gf/
 
 # testing
 /coverage
@@ -38,3 +39,6 @@ next-env.d.ts
 
 # contentlayer
 .contentlayer
+
+# superpowers brainstorming companion
+.superpowers
