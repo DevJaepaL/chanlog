@@ -26,10 +26,12 @@ type FigureResult = { kind: "figure"; label: string; caption: string };
 
 export interface DocumentRegion {
   id: DocumentRegionId;
-  label: "문서 제목" | "요약" | "표" | "차트";
-  accessibleName: "문서 제목 선택" | "요약 선택" | "표 선택" | "차트 선택";
+  label: "문서 제목" | "텍스트" | "표 (추출 예시)" | "그림";
+  accessibleName: "문서 제목 선택" | "텍스트 선택" | "표 선택" | "그림 선택";
   accent: DocumentRegionAccent;
   rect: NormalizedRect;
+  detectedRects?: readonly NormalizedRect[];
+  supplementalDetections?: readonly string[];
   marker: {
     point: NormalizedPoint;
     number: "1" | "2" | "3" | "4";
@@ -42,6 +44,13 @@ export interface DocumentPreprocessorDemo {
   panelId: "document-preprocessor-panel";
   title: string;
   description: string;
+  contribution: string;
+  preview: {
+    label: "추출 결과 예시";
+    marker: "1";
+    field: "문서 제목";
+    text: "2026년 7월 월간 수출입 현황 [확정치]";
+  };
   actions: { collapsed: string; expanded: string };
   source: string;
   image: { src: string; width: 1785; height: 2523; alt: string };
@@ -51,10 +60,20 @@ export interface DocumentPreprocessorDemo {
 export const documentPreprocessorDemo = {
   sectionId: "document-preprocessor",
   panelId: "document-preprocessor-panel",
-  title: "문서 전처리기 구현",
-  description: "PDF·DOCX·HWP의 제목·본문·표·차트를 구조 단위로 분리했습니다.",
-  actions: { collapsed: "구현 보기", expanded: "접기" },
-  source: "출처: 관세청 「2026년 7월 수출입 현황 [확정치]」, 2026. 8. 18., 1쪽",
+  title: "Document Extractor · Preprocessor",
+  description:
+    "PDF·DOCX·HWP등 처리가 복잡한 공공기관 문서의 제목·본문·표·그림등을 문맥에 맞는 구조 단위로 효율적으로 분리했습니다.",
+  contribution:
+    "개발을 진행하며 오픈소스 및 모델 학습을 적극적으로 연구·탐색하며 초기 개발에 큰 기여를 했습니다.",
+  preview: {
+    label: "추출 결과 예시",
+    marker: "1",
+    field: "문서 제목",
+    text: "2026년 7월 월간 수출입 현황 [확정치]",
+  },
+  actions: { collapsed: "구현 예시", expanded: "접기" },
+  source:
+    "출처: 관세청 「2026년 7월 월간 수출입 현황 [확정치]」, 2026. 8. 18., 1쪽",
   image: {
     src: "/images/document-preprocessor/customs-2026-07-page-1.webp",
     width: 1785,
@@ -69,30 +88,39 @@ export const documentPreprocessorDemo = {
       accent: "orange",
       rect: { x: 0.162, y: 0.157, width: 0.689, height: 0.032 },
       marker: { point: { x: 0.82, y: 0.173 }, number: "1" },
-      result: { kind: "text", lines: ["2026년 7월 수출입 현황 [확정치]"] },
+      result: { kind: "text", lines: ["2026년 7월 월간 수출입 현황 [확정치]"] },
     },
     {
       id: "summary",
-      label: "요약",
-      accessibleName: "요약 선택",
+      label: "텍스트",
+      accessibleName: "텍스트 선택",
       accent: "teal",
       rect: { x: 0.104, y: 0.198, width: 0.804, height: 0.081 },
+      detectedRects: [
+        { x: 0.1, y: 0.3, width: 0.38, height: 0.04 },
+        { x: 0.1, y: 0.345, width: 0.8, height: 0.1 },
+      ],
+      supplementalDetections: [],
       marker: { point: { x: 0.14, y: 0.239 }, number: "2" },
       result: {
         kind: "list",
         lines: [
-          "수출 990억 달러, 전년 동월 대비 63.0% 증가",
-          "무역수지 304억 달러 흑자",
-          "수출 14개월 연속 증가",
+          "- 수출 990억 달러로 14개월 연속 증가",
+          "- 무역수지(304억 달러) 2개월 연속 300억 달러 넘어 18개월 연속 흑자",
+          "- 반도체 수출(412억 달러) 2개월 연속 400억 달러 돌파 17개월 연속 증가",
         ],
       },
     },
     {
       id: "table",
-      label: "표",
+      label: "표 (추출 예시)",
       accessibleName: "표 선택",
       accent: "purple",
       rect: { x: 0.16, y: 0.481, width: 0.737, height: 0.145 },
+      detectedRects: [{ x: 0.12, y: 0.645, width: 0.78, height: 0.07 }],
+      supplementalDetections: [
+        "7월 수출(63.0%)은 반도체 호조로 7월 기준 역대 최대실적으로 2개월 연속 900억 달러를 넘어서며, 14개월 연속 증가하였다.",
+      ],
       marker: { point: { x: 0.82, y: 0.554 }, number: "3" },
       result: {
         kind: "table",
@@ -105,27 +133,28 @@ export const documentPreprocessorDemo = {
     },
     {
       id: "chart",
-      label: "차트",
-      accessibleName: "차트 선택",
+      label: "그림",
+      accessibleName: "그림 선택",
       accent: "sky",
       rect: { x: 0.157, y: 0.735, width: 0.743, height: 0.189 },
       marker: { point: { x: 0.18, y: 0.83 }, number: "4" },
       result: {
         kind: "figure",
-        label: "월별 수출입 현황",
-        caption: "수출입 추이",
+        label: "[그림 1] 월별 수출입 현황 차트",
+        caption: "[그림 2] 수출입 추이 차트",
       },
     },
   ],
 } as const satisfies DocumentPreprocessorDemo;
 
-const DOCUMENT_REGION_MARKER_SIZE = 44;
+export const DOCUMENT_REGION_MARKER_TARGET_SIZE = 44;
+export const DOCUMENT_REGION_MARKER_VISUAL_SIZE = 20;
 
 export function getDocumentRegionMarkerBounds(
   region: DocumentRegion,
   preview: { width: number; height: number }
 ) {
-  const halfSize = DOCUMENT_REGION_MARKER_SIZE / 2;
+  const halfSize = DOCUMENT_REGION_MARKER_TARGET_SIZE / 2;
   const centerX = region.marker.point.x * preview.width;
   const centerY = region.marker.point.y * preview.height;
   return {

@@ -3,7 +3,7 @@ import { contacts, profile } from "@/lib/profile";
 function Footer() {
   return (
     <footer className="mt-auto w-full border-t border-white/15 bg-chrome">
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 px-6 py-10">
+      <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-2 px-6 py-3">
         <div className="flex gap-5 text-caption">
           {contacts.map(({ label, href }) => (
             <a

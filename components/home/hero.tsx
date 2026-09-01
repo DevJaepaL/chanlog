@@ -4,7 +4,7 @@ import { profile } from "@/lib/profile";
 
 export function Hero() {
   return (
-    <section className="w-full bg-secondary px-6 py-20 sm:py-28">
+    <section className="w-full bg-secondary px-6 py-16 sm:py-20">
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center gap-6 text-center">
         <Image
           src={avatar}

@@ -2,7 +2,9 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import Footer from "@/components/footer";
+import { Hero } from "@/components/home/hero";
 import { NavbarView } from "@/components/navbar";
+import { Section } from "@/components/ui/section";
 
 const tailwindConfig = require("../tailwind.config.js");
 
@@ -15,6 +17,11 @@ describe("global chrome", () => {
     expect(markup).toContain("border-white/15");
     expect(markup).toContain("text-white/75");
     expect(markup).toContain("text-white/60");
+    expect(markup).toContain("gap-2");
+    expect(markup).toContain("py-3");
+    expect(markup).not.toContain("gap-4");
+    expect(markup).not.toContain("py-10");
+    expect(markup.match(/min-h-11/g)).toHaveLength(3);
   });
 
   it("renders navigation with chrome contrast, active state, and visible keyboard focus", () => {
@@ -28,5 +35,22 @@ describe("global chrome", () => {
     expect(markup).toContain(
       "focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-chrome"
     );
+  });
+
+  it("uses compact shared section and hero vertical spacing", () => {
+    const sectionMarkup = renderToStaticMarkup(
+      createElement(Section, {
+        eyebrow: "Test",
+        title: "제목",
+        children: "내용",
+      })
+    );
+    const hero = Hero();
+
+    expect(sectionMarkup).toContain("px-6 py-10 sm:py-12");
+    expect(sectionMarkup).toContain("mb-6 text-heading-2");
+    expect(sectionMarkup).not.toContain("py-16 sm:py-20");
+    expect(hero.props.className).toContain("px-6 py-16 sm:py-20");
+    expect(hero.props.className).not.toContain("py-20 sm:py-28");
   });
 });

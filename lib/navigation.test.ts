@@ -11,7 +11,7 @@ describe("navigation contracts", () => {
   it("exposes the exact page tabs in order", () => {
     expect(NAV_ITEMS).toEqual([
       { label: "아카이브", href: "/" },
-      { label: "포트폴리오", href: "/portfolio" },
+      { label: "About", href: "/portfolio" },
     ]);
   });
 

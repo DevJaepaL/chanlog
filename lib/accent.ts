@@ -16,3 +16,33 @@ const DOT: Record<AccentColor, string> = {
 };
 
 export const accentDotClass = (accent: AccentColor) => DOT[accent];
+
+const PROJECT_SKILL_ACCENTS: Record<string, AccentColor> = {
+  Python: "orange",
+  Java: "orange",
+  FastAPI: "teal",
+  "REST API": "teal",
+  MSA: "teal",
+  Spring: "teal",
+  LangChain: "purple",
+  LangGraph: "purple",
+  RAG: "purple",
+  "데이터 전처리": "purple",
+  MariaDB: "pink",
+  MongoDB: "pink",
+  "Mongo DB": "pink",
+  Docker: "sky",
+  Podman: "sky",
+  Kubernetes: "sky",
+  Git: "sky",
+  ReactJS: "green",
+  PyQGIS: "sky",
+  GIS: "sky",
+  PyQt6: "green",
+  "Cron Scheduler": "sky",
+  RPA: "teal",
+};
+
+export function projectSkillAccent(skill: string): AccentColor | undefined {
+  return PROJECT_SKILL_ACCENTS[skill];
+}

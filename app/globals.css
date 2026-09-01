@@ -44,9 +44,25 @@ body {
   overflow-x: clip;
 }
 
+@keyframes pipeline-flow {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+.pipeline-flow-path {
+  stroke-dasharray: 6 10;
+  animation: pipeline-flow 1.8s linear infinite;
+  animation-delay: var(--flow-delay, 0ms);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .pipeline-flow-path {
+    animation: none;
   }
 }
 
@@ -65,7 +81,7 @@ body {
 }
 
 .prose a {
-  @apply decoration-[0.1em] decoration-primary underline-offset-2 transition-all;
+  @apply decoration-primary decoration-[0.1em] underline-offset-2 transition-all;
 }
 
 .prose .anchor:after {
@@ -185,7 +201,8 @@ pre code {
   border-bottom: 0;
 }
 
-.prose :where(th:last-child, td:last-child):not(:where([class~="not-prose"] *)) {
+.prose
+  :where(th:last-child, td:last-child):not(:where([class~="not-prose"] *)) {
   border-right: 0;
 }
 

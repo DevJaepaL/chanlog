@@ -2,7 +2,7 @@ import type { ContactLink } from "@/lib/profile";
 
 export const NAV_ITEMS = [
   { label: "아카이브", href: "/" },
-  { label: "포트폴리오", href: "/portfolio" },
+  { label: "About", href: "/portfolio" },
 ] as const;
 
 const HEADER_CONTACT_LABELS = ["Contact", "GitHub"] as const;

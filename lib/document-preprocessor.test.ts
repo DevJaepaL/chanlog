@@ -30,16 +30,18 @@ function resultStrings() {
 
 describe("documentPreprocessorDemo", () => {
   it("owns the exact public copy and four unique region contracts", () => {
-    expect(documentPreprocessorDemo.title).toBe("문서 전처리기 구현");
+    expect(documentPreprocessorDemo.title).toBe(
+      "Document Extractor · Preprocessor"
+    );
     expect(documentPreprocessorDemo.description).toBe(
-      "PDF·DOCX·HWP의 제목·본문·표·차트를 구조 단위로 분리했습니다."
+      "PDF·DOCX·HWP등 처리가 복잡한 공공기관 문서의 제목·본문·표·그림등을 문맥에 맞는 구조 단위로 효율적으로 분리했습니다."
     );
     expect(documentPreprocessorDemo.actions).toEqual({
-      collapsed: "구현 보기",
+      collapsed: "구현 예시",
       expanded: "접기",
     });
     expect(documentPreprocessorDemo.source).toBe(
-      "출처: 관세청 「2026년 7월 수출입 현황 [확정치]」, 2026. 8. 18., 1쪽"
+      "출처: 관세청 「2026년 7월 월간 수출입 현황 [확정치]」, 2026. 8. 18., 1쪽"
     );
 
     const ids = documentPreprocessorDemo.regions.map((region) => region.id);
@@ -51,7 +53,7 @@ describe("documentPreprocessorDemo", () => {
     expect(new Set(labels).size).toBe(4);
     expect(
       documentPreprocessorDemo.regions.map((region) => region.accessibleName)
-    ).toEqual(["문서 제목 선택", "요약 선택", "표 선택", "차트 선택"]);
+    ).toEqual(["문서 제목 선택", "텍스트 선택", "표 선택", "그림 선택"]);
 
     for (const region of documentPreprocessorDemo.regions) {
       for (const value of Object.values(region.rect)) {
@@ -75,13 +77,13 @@ describe("documentPreprocessorDemo", () => {
     expect(
       documentPreprocessorDemo.regions.map((region) => region.result)
     ).toEqual([
-      { kind: "text", lines: ["2026년 7월 수출입 현황 [확정치]"] },
+      { kind: "text", lines: ["2026년 7월 월간 수출입 현황 [확정치]"] },
       {
         kind: "list",
         lines: [
-          "수출 990억 달러, 전년 동월 대비 63.0% 증가",
-          "무역수지 304억 달러 흑자",
-          "수출 14개월 연속 증가",
+          "- 수출 990억 달러로 14개월 연속 증가",
+          "- 무역수지(304억 달러) 2개월 연속 300억 달러 넘어 18개월 연속 흑자",
+          "- 반도체 수출(412억 달러) 2개월 연속 400억 달러 돌파 17개월 연속 증가",
         ],
       },
       {
@@ -92,8 +94,49 @@ describe("documentPreprocessorDemo", () => {
           { label: "수입", cells: ["68,567백만 달러", "26.5% 증가"] },
         ],
       },
-      { kind: "figure", label: "월별 수출입 현황", caption: "수출입 추이" },
+      {
+        kind: "figure",
+        label: "[그림 1] 월별 수출입 현황 차트",
+        caption: "[그림 2] 수출입 추이 차트",
+      },
     ]);
+  });
+
+  it("keeps supplemental detections attached to their parent source regions", () => {
+    const summary = documentPreprocessorDemo.regions[1];
+    const table = documentPreprocessorDemo.regions[2];
+
+    expect(
+      "detectedRects" in summary ? summary.detectedRects : []
+    ).toHaveLength(2);
+    expect(
+      "supplementalDetections" in summary ? summary.supplementalDetections : []
+    ).toEqual([]);
+    expect("detectedRects" in table ? table.detectedRects : []).toHaveLength(1);
+    expect(
+      "supplementalDetections" in table ? table.supplementalDetections : []
+    ).toEqual([
+      "7월 수출(63.0%)은 반도체 호조로 7월 기준 역대 최대실적으로 2개월 연속 900억 달러를 넘어서며, 14개월 연속 증가하였다.",
+    ]);
+
+    for (const rect of [
+      ...("detectedRects" in summary ? summary.detectedRects ?? [] : []),
+      ...("detectedRects" in table ? table.detectedRects ?? [] : []),
+    ]) {
+      for (const value of Object.values(rect)) {
+        expect(value).toBeGreaterThan(0);
+        expect(value).toBeLessThanOrEqual(1);
+      }
+      expect(rect.x + rect.width).toBeLessThanOrEqual(1);
+      expect(rect.y + rect.height).toBeLessThanOrEqual(1);
+    }
+
+    const summaryRects =
+      "detectedRects" in summary ? summary.detectedRects : [];
+    const tableRects = "detectedRects" in table ? table.detectedRects : [];
+    expect(summaryRects?.[0]?.height).toBeGreaterThanOrEqual(0.04);
+    expect(summaryRects?.[1]?.height).toBeGreaterThanOrEqual(0.09);
+    expect(tableRects?.[0]?.height).toBeGreaterThanOrEqual(0.065);
   });
 
   it("keeps numbered marker centers inside their regions and 44px targets apart", () => {
