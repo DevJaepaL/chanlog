@@ -1,0 +1,307 @@
+---
+title: "Kiro 사용 가이드"
+publishedAt: "2026-09-02"
+summary: "아마존의 귀여운 마스코트 IDE"
+thumbnail: "/images/6-kiro/kiro-thumbnail.webp"
+tags: ["AI Tools", "Kiro", "IDE"]
+---
+
+<img
+  src="/images/6-kiro/kiro-thumbnail.webp"
+  alt="Kiro"
+  className="w-auto h-3 object-cover border-4 rounded-xl"
+/>
+
+## 들어가기 전에
+
+요새는 각종 분야에 한정되지 않고 일상 곳곳에서 AI 도구를 참 많이 활용한다.<br></br>
+하물며 최근에는 정보 하나 찾아보더라도 네이버 블로그 게시물 조차 생성형 AI를 활용한 게시글이 많이 보인다.<br></br>
+이에 따른 좋은 점도 있고 나쁜 점도 있는 듯하다.
+
+본론으로 돌아와 필자가 실무에서 제일 많이 사용하는 AI 도구로 <br></br>
+제일 대표적인 AI 에이전트인 `[Anthropic] Claude Code` 와 `[OpenAI] Codex` 이다.<br></br>
+두 도구 모두 각자 갖고 있는 IDE 환경이 없으며 TUI 환경 또는 별도 앱 환경에서 가동되고 있다.
+
+그러나 AI 에이전트를 IDE 환경에서 코드 작성, 디버깅, 코드 롤백 등을 간편하게 사용하도록 만든 IDE가<br></br>몇 개 있는데
+대표적으로 하기 3개의 툴이 존재한다.
+
+- `Cursor`
+- `Github Copilot`
+- `Kiro`
+
+등이 있다.<br/>
+이 중 필자는 `Cursor` 만 예전에 조금 사용해보다가 이번에 `Kiro`를 사용해봤는데 현재까지<br/>
+유용하게 사용하고 있어 관련 내용을 다뤄보고자 한다.
+
+## Kiro ?
+
+Kiro는 우리가 흔히 알고 있는 [Amazon AWS](https://aws.amazon.com)에서 만든 AI Coding IDE이다.<br/>
+Cursor와 유사하게 VS Code 기반으로 동작하며, 자체 모델이 아닌 Claude 모델을 기본으로 탑재했다.<br/>
+
+<img
+  src="/images/6-kiro/ide_image_1.png"
+  alt="Kiro IDE 메인 화면"
+  className="w-auto h-3 object-cover border-2 rounded-lg"
+/>
+> 필자가 사용하고 있는 Kiro 화면
+
+<br/>**여기서 제일 눈 여겨볼 점은, VS Code를 자주 사용했던 사람들은 본인이 VS Code에서 사용했던 플러그인이나 Theme, 세팅 등을 그대로 마이그레이션**하여 Kiro에서 바로 추가 세팅할 필요 없이 작업이 가능하단 점이다.
+
+
+Cursor, Copilot 등 기존 AI 코딩 도구와 다른 점은 크게 세 가지다.
+
+- **Spec-driven Development** : 코드를 짜기 전에 `요구사항` → `설계` → `태스크` 단계를 거쳐<br/>파이프라인 구조를 잡는다.
+- **Steering** : AI의 행동 규칙을 프로젝트 단위로 고정
+- **Hooks** : 파일 저장, 커밋 등 이벤트 발생 시 AI 작업을 자동으로 트리거한다.
+
+단순히 "코드 자동완성"이 아니라, 설계부터 구현까지 에이전트가 함께 작업하는 방식이다.
+
+
+---
+
+## 시작하기
+
+[공식 홈페이지(kiro.dev)](https://kiro.dev) 에서 다운로드할 수 있다.
+
+- `macOS` / `Windows` / `Linux` 모두 지원
+- 독립 IDE 형태 (VS Code fork 형태)로 제공
+- [필수] 설치 후 `AWS Builder ID` 또는 `AWS IAM Identity Center`로 로그인
+
+```bash
+# macOS - CLI로 설치할 경우
+curl -fsSL https://cli.kiro.dev/install | bash
+```
+
+로그인 후 좌측 Kiro 패널 → 채팅창에서 바로 사용 가능.
+
+---
+
+## 핵심 개념
+
+Kiro를 제대로 쓰려면 세 가지 개념을 먼저 이해해야 한다.
+
+### Steering
+
+`.kiro/steering/` 폴더에 마크다운 파일로 AI 행동 규칙을 지정한다.
+
+- 기존 AI 에이전트를 사용할 때 `AGENT.md` , `CLAUDE.md` 와 같은 유형이라고 생각하면 된다.
+  - → 매번 프롬프트에 "TypeScript 써줘", "한국어로 답해줘" 같은 말을 사용하지 않아도 됨
+- 또는 프로젝트 전체에 걸쳐 일관된 규칙을 적용할 수 있다.
+- `inclusion: auto` 설정으로 특정 파일을 열 때만 규칙을 자동 적용하는 것도 가능.
+
+```markdown
+<!-- .kiro/steering/coding-standards.md -->
+- 항상 TypeScript를 사용할 것
+- 함수에는 반드시 JSDoc 주석을 작성할 것
+- 커밋 메시지는 한국어로 작성할 것
+- [Python] 함수 작성 시 Docstring을 준수하여 작성하라.
+- [Python] 무분별한 주석을 자제하며 패키지 명명 규칙은 AGENTS.md를 참고할 것
+...
+...
+```
+
+---
+
+### Specs
+
+기능 구현 전 `요구사항` → `설계` → `태스크` 3단계를 거쳐 구조를 설계한다.
+
+- `.kiro/specs/` 폴더에 자동 저장된다.
+- 단계마다 사용자가 에이전트의 작업을 `검토`·`승인` 후 다음 단계로 넘어간다.
+- 적용 시, 보다 정교한 리팩터링 또는 코드 작업을 할 수 있다.
+
+```
+.kiro/specs/
+└── my-feature/
+    ├── requirements.md   # 요구사항
+    ├── design.md         # 설계
+    └── tasks.md          # 구현 태스크 목록
+```
+
+<img
+  src="/images/6-kiro/kiro_arch.png"
+  alt="Spec 진행 중 화면"
+  className="w-auto h-3 object-cover border-2 rounded-lg"
+/>
+> *AWS - Kiro Spec Library*
+
+
+보다 자세한 내용 및 작성 가이드는 [Kiro 공식 가이드 문서(Spec)](https://kiro.dev/docs/specs/?trk=1916cc79-8abc-4f5f-9657-d26c82ae9801&sc_channel=ps&trk=978ad4d7-de6b-4598-814f-fba387d98aad&sc_channel=ps&ef_id=Cj0KCQjw79nUBhCgARIsADSHka2MAVSnQeq229itpzl4OMzSKAWpE9YhQWhWK3VEAGYwEVi-rejmYHQaAsdZEALw_wcB:G:s&s_kwcid=AL!4422!3!808746854149!p!!g!!kiro%20spec!23846236553!198027731482&gad_source=1&gad_campaignid=23846236553) 에서 확인할 수 있다.
+
+---
+
+### Hooks
+
+> Kiro의 핵심 기능 중 하나인, Agent Hooks는 개발 워크플로우 전체를 자동화된 파이프라인으로 바꿔줍니다.
+
+Hooks의 경우 작업 진행 중에, 이벤트 발생 시 AI 작업을 자동으로 실행시킨다.
+
+- Hooks 트리거 예시:
+  - 파일 저장시 Document 작성 또는 수정
+  - 함수 작성 또는 코드, 패키지 변경시 이에 맞는 테스트 코드 자동 작성
+  - 커밋 시, 관련 패치 노트 작성 또는 CI/CD 자동 진행
+- `.kiro/hooks/` 폴더에 JSON 파일로 저장한다.
+- 사용하기 좋은 예시
+  - `.ts` 파일 저장 시 자동으로 lint 실행
+  - `Python` 코드 작성 완료가 됐다면, `Pylint` 또는 `Ruff`를 통한 lint 검사 진행
+
+```json
+{
+  "version": "v1",
+  "hooks": [{
+    "name": "Lint on Save",
+    "trigger": "PostFileSave",
+    "matcher": "\\.(ts|tsx)$",
+    "action": { "type": "command", "command": "npm run lint" }
+  }]
+}
+```
+
+<video
+  src="/images/6-kiro/hooks-ide.mp4"
+  controls
+  playsInline
+  preload="metadata"
+  className="mx-auto w-full rounded-lg border-2"
+/>
+> Hooks 설정 예시 (원본 : AWS 공식 영상)
+
+보다 자세한 내용 및 작성 가이드는 [Kiro 공식 가이드 문서(Kiro)](https://kiro.dev/docs/hooks/) 에서 확인할 수 있다.
+
+---
+
+## 지원 모델
+
+최신 출시 모델은 바로 바로 제공되는 것으로 보인다.
+
+- 확인 기준 : 2026-09-02
+
+| 모델명 | Context Size | Auto 대비 크레딧 배수 | Free(무료) | 유료(Pro 구독 이상) |
+|------|----------|----------------------|------|------------------------------|
+| GPT-5.6 Sol | 272K | 2.4x | X | O |
+| GPT-5.6 Terra | 272K | 1.0x | X | O |
+| GPT-5.6 Luna | 272K | 0.1x | X | O |
+| Claude Opus 5 | 1M | 2.2x | X | O |
+| Claude Opus 4.8 | 1M | 2.2x | X | O |
+| Claude Opus 4.7 | 1M | 2.2x | X | O |
+| Claude Opus 4.6 | 1M | 2.2x | X | O |
+| Claude Opus 4.5 | 200K | 2.2x | X | O |
+| Claude Sonnet 5 | 1M | 1.3x | X | O |
+| Claude Sonnet 4.6 | 1M | 1.3x | X | O |
+| Claude Sonnet 4.5 | 200K | 1.3x | O | O |
+| Claude Sonnet 4.0 | 200K | 1.3x | O | O |
+| Auto | — | 1.0x | O | O |
+| Claude Haiku 4.5 | 200K | 0.4x | X | O |
+| DeepSeek 3.2 | 128K | 0.25x | O | O |
+| MiniMax M2.5 | 200K | 0.25x | O | O |
+| GLM-5 | 200K | 0.5x | O | O |
+| MiniMax M2.1 | 200K | 0.15x | O | O |
+| Qwen3 Coder Next | 256K | 0.05x | O | O |
+
+| 요금제 | 월간 크레딧 | 모델 제공 범위 | 추가 크레딧 |
+|--------|------------|----------------|-------------|
+| Free | 50 credits | 제한된 모델 | 불가 |
+| Pro | 1,000 credits | 전체 최신 모델 | 가능 |
+| Pro+ | 2,000 credits | 전체 최신 모델 | 가능 |
+| Pro Max | 5,000 credits | 전체 최신 모델 | 가능 |
+| Power | 10,000 credits | 전체 최신 모델 | 가능 |
+
+
+- 모델 변경 방법
+  - `IDE` : 채팅창 하단에 모델 선택 지원
+  - `CLI`
+    ```
+    # Bash
+    kiro-cli settings chat.defaultModel claude-opus-4.8
+    or
+    > /model set-current-as-default
+    ```
+
+---
+
+## 모드별 사용법
+
+채팅창 좌측 에이전트 선택기에서 모드를 변경한다.
+
+
+| 모드 | 모드 설명 | 특징 |
+|------|-----------|------|
+| Default | 일상적인 코드 작성, 질문, 수정 | 자유로운 대화형 |
+| Spec | 대규모 기능 개발 시 적합 | 요구사항→설계→태스크 3단계, 단계마다 승인 |
+| Quick Spec | 빠르게 설계 잡고 바로 구현 | Spec의 간소화 버전 |
+| Plan | 계획이 중요한 변경 작업 | 코드 작성 전 계획 확인 후 실행 |
+| Bug Fix | 버그 추적·수정 | 진단→원인 분석→수정안 제시 흐름 |
+
+---
+
+### Default
+
+가장 기본적인 모드. 별도 구조 없이 자유롭게 요청한다.
+
+```
+프론트 UI 컴포넌트에 로딩 스피너 추가해줘
+```
+
+---
+
+### Spec
+
+복잡하거나, 규모가 있는 기능을 만들 때 사용한다. 모델이 임의대로 진행하지 않고 각 단계(또는 태스크)마다 사용자가 진행을 검토한다.
+
+```
+결제 시스템 추가해줘
+→ 1단계: 요구사항 작성 (검토 후 승인)
+→ 2단계: 설계 문서 작성 (검토 후 승인)
+→ 3단계: 태스크 목록 생성 후 구현 시작
+```
+
+---
+
+### Quick Spec
+
+Spec보다 더 빠른 형태로, 긴 문서 없이 핵심만 잡고 바로 구현에 들어간다.
+
+```
+로그인 폼 컴포넌트 만들어줘 (유효성 검사 포함)
+```
+
+---
+
+### Plan
+
+코드 작성 전에 진행을 어떻게 할 지 정하고 작업을 진행한다. <br/>
+계획 확인 후 승인하면 코드 작성을 진행하는 형태
+
+```
+auth 모듈 전체 리팩토링 계획 잡아줘
+```
+
+---
+
+### Bug Fix
+
+버그 증상을 설명하면 해당 원인을 찾고 수정까지 진행해준다.
+
+```
+로그인 후 리다이렉트가 안 되는 버그 고쳐줘
+```
+
+---
+
+## 실제 사용 시 적용하면 좋은 것
+
+- **Steering**
+  - 기존에 Claude나 Codex를 사용했던 유저라면, CLAUDE.md 또는 AGENTS.md 일부를 Steering에 적용하거나 그대로 이관해서 사용하면 편함.<br/>필자는 기존에 사용하던 프롬프트 문서 그대로 적용하여 사용 중..
+- **피쳐 또는 새로운 기능 작업 시에는 Spec 모드로 진행**
+  - 아무래도 기존 코드에 새로운 기능이나 모듈을 추가할 때는 Spec으로 시작하는 게 체감상 더 좋았음
+- **모델 선택**
+  - 한창 Opus 5 사용하다가, 요새는 체감상 ChatGPT의 Sol 모델이 더 좋아보인다.
+- **Hooks 활용**
+  - 매번 lint 돌리거나 유닛 테스트 코드 같은 반복 작성이 필요한 부분은 Hooks 적용할 경우 많이 유용한 듯하다.
+
+---
+
+### Reference
+
+- <a href="https://kiro.dev">kiro.dev</a>
+- <a href="https://kiro.dev/docs">kiro.dev/docs Official Document</a>
