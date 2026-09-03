@@ -17,21 +17,21 @@ export function NavbarView({ pathname }: { pathname: string | null }) {
     <header className="sticky top-0 z-50 w-full border-b border-white/15 bg-chrome">
       <nav
         aria-label="주 내비게이션"
-        className="mx-auto flex w-full max-w-5xl flex-wrap items-center px-6 sm:h-16 sm:flex-nowrap"
+        className="mx-auto flex h-14 w-full max-w-5xl flex-nowrap items-center px-3 sm:h-16 sm:px-6"
       >
         <Link
           href="/"
-          className="inline-flex min-h-11 items-center pr-3 text-title text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-chrome"
+          className="inline-flex min-h-11 shrink-0 items-center pr-1 text-[0.6875rem] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-chrome sm:pr-3 sm:text-title"
         >
           CHANLOG
         </Link>
-        <ul className="order-3 flex basis-full items-center gap-1 sm:order-2 sm:ml-auto sm:basis-auto">
+        <ul className="ml-auto flex shrink-0 items-center gap-0 sm:gap-1">
           {NAV_ITEMS.map(({ label, href }) => (
-            <li key={href}>
+            <li key={href} className="shrink-0">
               <Link
                 href={href}
                 aria-current={activeHref === href ? "page" : undefined}
-                className={`inline-flex min-h-11 items-center px-2 text-body-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-chrome ${
+                className={`inline-flex min-h-11 items-center whitespace-nowrap px-1 text-[0.6875rem] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-chrome sm:px-2 sm:text-body-sm ${
                   activeHref === href
                     ? "font-semibold text-white"
                     : "text-white/75 hover:text-white"
@@ -44,15 +44,15 @@ export function NavbarView({ pathname }: { pathname: string | null }) {
         </ul>
         <span
           aria-hidden="true"
-          className="order-3 hidden h-5 w-px bg-white/15 sm:mx-3 sm:block"
+          className="mx-1 block h-5 w-px shrink-0 bg-white/15 sm:mx-3"
         />
-        <ul className="ml-auto flex min-h-11 items-center gap-1 sm:order-4 sm:ml-0">
+        <ul className="flex min-h-11 shrink-0 items-center gap-0 sm:gap-1">
           {getHeaderContacts(contacts).map((contact) => (
-            <li key={contact.label}>
+            <li key={contact.label} className="shrink-0">
               <a
                 href={contact.href}
                 {...getHeaderActionAttributes(contact)}
-                className="inline-flex min-h-11 items-center px-2 text-body-sm text-white/75 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-chrome"
+                className="inline-flex min-h-11 items-center whitespace-nowrap px-1 text-[0.6875rem] text-white/75 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-chrome sm:px-2 sm:text-body-sm"
               >
                 {contact.label}
               </a>

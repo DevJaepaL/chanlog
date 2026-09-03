@@ -37,6 +37,30 @@ describe("global chrome", () => {
     );
   });
 
+  it("keeps the complete mobile navigation in one compact, non-wrapping row", () => {
+    const markup = renderToStaticMarkup(
+      createElement(NavbarView, { pathname: "/posts" })
+    );
+
+    expect(markup).toContain("h-14");
+    expect(markup).toContain("flex-nowrap");
+    expect(markup).toContain("px-3 sm:h-16 sm:px-6");
+    expect(markup).toContain("whitespace-nowrap");
+    expect(markup).toContain("text-[0.6875rem]");
+    expect(markup).toContain("px-1");
+    expect(markup).toContain("min-h-11");
+    expect(markup).not.toContain("flex-wrap");
+    expect(markup).not.toContain("basis-full");
+    expect(markup).toMatch(
+      /<ul class="(?=[^"]*ml-auto)(?=[^"]*flex)(?=[^"]*shrink-0)[^"]*">/
+    );
+    expect(markup).toMatch(
+      /About<\/a><\/li><\/ul><span aria-hidden="true" class="(?=[^"]*block)(?=[^"]*mx-1)(?=[^"]*shrink-0)[^"]*"[^>]*><\/span><ul[^>]*>[\s\S]*?Contact/
+    );
+    expect(markup).not.toContain("hidden h-5");
+    expect(markup).not.toMatch(/(?:^|[\s:])order-/);
+  });
+
   it("uses compact shared section and hero vertical spacing", () => {
     const sectionMarkup = renderToStaticMarkup(
       createElement(Section, {
