@@ -45,6 +45,11 @@
 - 글 상세 모바일 목차는 기본 펼침.
 - "Document Extractor · Preprocessor" 구현 예시는 버튼 없이 항상 펼쳐 보임(구현 예시/접기 문구 제거).
 
+### 5차 반영 (2026-11-10)
+
+- About은 소개만 기본 펼침, 프로젝트·경력·기술 스택은 접힌 채 시작(`Section`의 `defaultOpen`). 해시·탭 링크로 들어오면 자동 펼침.
+- About 항목 스타일 통일(`components/home/about-styles.ts`): 모든 항목은 같은 회색 카드(`rounded-2xl bg-canvas-muted`, `p-5 sm:p-8`, 간격 `gap-3 sm:gap-4`), 항목 제목 20→24px, 메타 15px, 라벨 14px, 본문 16→17px `text-ink-secondary`. 경력은 카드, 기술 스택은 분류별 카드(넓은 화면 2열), 칩은 모두 compact 흰색.
+
 ## 보존할 데이터와 공개 범위
 
 - `lib/profile.ts`: 프로필, 경력, 프로젝트, 스킬, 연락 데이터의 단일 출처.
