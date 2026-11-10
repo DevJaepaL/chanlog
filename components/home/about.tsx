@@ -1,3 +1,9 @@
+import {
+  ABOUT_CARD,
+  ABOUT_CARD_PADDING,
+  ABOUT_LIST,
+  ITEM_BODY,
+} from "@/components/home/about-styles";
 import { Section } from "@/components/ui/section";
 import { profile } from "@/lib/profile";
 
@@ -6,18 +12,15 @@ export function About() {
 
   return (
     <Section id="about" eyebrow="About" title="소개" wide collapsible>
-      <p className="mb-5 break-keep text-title font-semibold leading-relaxed text-ink sm:text-heading-3 sm:font-semibold">
+      <p className="mb-6 break-keep text-title font-semibold leading-relaxed text-ink sm:text-heading-3 sm:font-semibold">
         안녕하세요.
         <br />
         {greeting}
       </p>
-      <ol className="flex w-full flex-col gap-3">
+      <ol className={ABOUT_LIST}>
         {summaries.map(([firstLine, secondLine]) => (
-          <li
-            key={firstLine}
-            className="rounded-xl bg-canvas-soft px-5 py-4 sm:px-6 sm:py-5"
-          >
-            <p className="break-keep text-body-md text-ink-secondary sm:text-body-lg">
+          <li key={firstLine} className={`${ABOUT_CARD} ${ABOUT_CARD_PADDING}`}>
+            <p className={ITEM_BODY}>
               <span className="sm:block">{firstLine}</span>{" "}
               <span className="sm:block">{secondLine}</span>
             </p>

@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { FiChevronDown } from "react-icons/fi";
+import { ABOUT_CARD } from "@/components/home/about-styles";
 import { useHashReveal } from "@/components/ui/use-hash-reveal";
 
 // `version` bumps on every "모두 펼치기/접기" click so items follow it once.
@@ -69,7 +70,7 @@ export function ProjectAccordionItem({
   const detailId = `project-${index}-detail`;
 
   return (
-    <div ref={rootRef} className="rounded-2xl bg-canvas-muted">
+    <div ref={rootRef} className={ABOUT_CARD}>
       <div className="group relative px-5 pb-3 pt-5 sm:px-8 sm:pt-8">
         {summary}
         {/* Visible cue that the whole card opens; the overlay button below carries the semantics. */}

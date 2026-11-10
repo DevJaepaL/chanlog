@@ -1,3 +1,11 @@
+import {
+  ABOUT_LIST,
+  ITEM_BODY,
+  ITEM_BULLETS,
+  ITEM_LABEL,
+  ITEM_META,
+  ITEM_TITLE,
+} from "@/components/home/about-styles";
 import { Chip } from "@/components/ui/chip";
 import {
   ExpandAllButton,
@@ -13,7 +21,7 @@ import { Section } from "@/components/ui/section";
 import { projects } from "@/lib/profile";
 import { projectSkillAccent } from "@/lib/accent";
 
-const LABEL = "mb-2 mt-5 text-caption font-semibold text-ink-faint";
+const LABEL = `mb-2 mt-5 ${ITEM_LABEL}`;
 
 export function ProjectList() {
   return (
@@ -23,12 +31,13 @@ export function ProjectList() {
       title="진행한 프로젝트"
       wide
       collapsible
+      defaultOpen={false}
     >
       <ProjectAccordionGroup>
         <div className="-mt-3 mb-2 flex justify-end">
           <ExpandAllButton />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className={ABOUT_LIST}>
           {projects.map((project, index) => (
             <ProjectAccordionItem
               key={project.title}
@@ -50,11 +59,11 @@ export function ProjectList() {
                     <div className="min-w-0 flex-1">
                       <h3
                         id={`project-${index}-title`}
-                        className="break-keep text-title font-bold text-ink sm:text-section"
+                        className={ITEM_TITLE}
                       >
                         {project.title}
                       </h3>
-                      <p className="mt-1 text-body-sm text-ink-muted">
+                      <p className={ITEM_META}>
                         {project.org}
                         {project.client ? ` · ${project.client}` : ""} |{" "}
                         {project.period}
@@ -77,17 +86,14 @@ export function ProjectList() {
                 </>
               }
             >
-              <h4 className="mb-2 text-caption font-semibold text-ink-faint">역할</h4>
-              <p className="break-keep text-body-md text-ink-secondary sm:text-body-lg">
+              <h4 className={`mb-2 ${ITEM_LABEL}`}>역할</h4>
+              <p className={ITEM_BODY}>
                 {project.role}
               </p>
               <h4 className={LABEL}>담당 업무</h4>
-              <ul className="list-outside list-disc space-y-1 pl-5 marker:text-ink-faint">
+              <ul className={ITEM_BULLETS}>
                 {project.experience.map((item) => (
-                  <li
-                    key={item}
-                    className="break-keep text-body-md text-ink-tertiary"
-                  >
+                  <li key={item} className={ITEM_BODY}>
                     {item}
                   </li>
                 ))}

@@ -15,6 +15,8 @@ interface SectionProps {
   wide?: boolean;
   /** Turn the title into a button that folds the section content. */
   collapsible?: boolean;
+  /** Whether a collapsible section starts open (URL hashes still open it). */
+  defaultOpen?: boolean;
 }
 
 export function Section({
@@ -24,8 +26,9 @@ export function Section({
   children,
   wide,
   collapsible = false,
+  defaultOpen = true,
 }: SectionProps) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(defaultOpen);
   const rootRef = useRef<HTMLElement>(null);
   const reveal = useCallback(() => setOpen(true), []);
   useHashReveal(rootRef, reveal);

@@ -9,6 +9,7 @@ import * as galleryModule from "@/components/home/project-gallery";
 import * as rpaModule from "@/components/home/rpa-pipeline-disclosure";
 import { PipelineDiagram } from "@/components/portfolio/pipeline-diagram";
 import { AboutTabs } from "@/components/portfolio/about-tabs";
+import { ABOUT_CARD } from "@/components/home/about-styles";
 import PortfolioPage from "@/app/portfolio/page";
 import { SkillGroups } from "@/components/home/skill-groups";
 import { profile, projects, careers, skillGroups } from "@/lib/profile";
@@ -360,13 +361,43 @@ describe("portfolio UI", () => {
     expect(markup).toMatch(/<h3 id="project-0-title"[\s\S]*?사용 기술[\s\S]*?<div id="project-0-detail"[^>]*hidden=""[^>]*>[\s\S]*?역할/);
   });
 
-  it("lets every About section collapse from its heading button", () => {
-    const markup = renderToStaticMarkup(createElement(CareerTimeline));
-    expect(markup).toMatch(
-      /<h2[^>]*><button type="button" aria-expanded="true" aria-controls="career-content"[^>]*>[\s\S]*?경력/
+  it("opens only 소개 by default and folds the other About sections behind their heading buttons", () => {
+    const about = renderToStaticMarkup(createElement(About));
+    expect(about).toMatch(
+      /<h2[^>]*><button type="button" aria-expanded="true" aria-controls="about-content"/
     );
-    expect(markup).toMatch(/<div id="career-content"/);
-    expect(markup).not.toMatch(/<div id="career-content"[^>]*hidden/);
+    expect(about).not.toMatch(/<div id="about-content"[^>]*hidden/);
+
+    for (const [Component, id] of [
+      [ProjectList, "projects"],
+      [CareerTimeline, "career"],
+      [SkillGroups, "skills"],
+    ] as const) {
+      const markup = renderToStaticMarkup(createElement(Component));
+      expect(markup).toMatch(
+        new RegExp(`<h2[^>]*><button type="button" aria-expanded="false" aria-controls="${id}-content"`)
+      );
+      expect(markup).toMatch(new RegExp(`<div id="${id}-content"[^>]*hidden=""`));
+    }
+  });
+
+  it("uses one card style and one title size for every About item", () => {
+    const markup = renderToStaticMarkup(
+      createElement("main", null,
+        createElement(About), createElement(ProjectList),
+        createElement(CareerTimeline), createElement(SkillGroups))
+    );
+    const cards = markup.split(`class="${ABOUT_CARD}`).length - 1;
+    // 3 소개 lines + 5 projects + 2 careers + 6 skill groups
+    expect(cards).toBe(3 + projects.length + careers.length + skillGroups.length);
+    const titleTexts = [...projects.map((p) => p.title), ...careers.map((c) => c.company)].map(
+      (text) => text.replace(/&/g, "&amp;")
+    );
+    const itemTitles = [...markup.matchAll(/<h3[^>]*class="([^"]*)"[^>]*>([^<]*)<\/h3>/g)]
+      .filter(([, , text]) => titleTexts.includes(text))
+      .map(([, cls]) => cls);
+    expect(itemTitles).toHaveLength(titleTexts.length);
+    expect(new Set(itemTitles).size).toBe(1);
   });
 
   it("offers sticky jump tabs for each About section", () => {
