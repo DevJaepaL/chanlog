@@ -30,7 +30,7 @@ export async function generateMetadata({
       description,
       type: "article",
       publishedTime,
-      url: `https://chanlog.blog/posts/${slug}`,
+      url: `https://www.chanlog.blog/posts/${slug}`,
     },
   };
 }

@@ -6,7 +6,7 @@ import { AnalyticsWrapper } from "@/components/analytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MotionProvider } from "@/components/ui/motion-provider";
 
-const SITE_URL = "https://chanlog.blog";
+const SITE_URL = "https://www.chanlog.blog";
 const SITE_TITLE = "CHANLOG | 기술 아카이브";
 const SITE_DESCRIPTION = "이재찬의 기술 블로그";
 

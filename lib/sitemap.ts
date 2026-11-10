@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = "https://chanlog.blog";
+const SITE_URL = "https://www.chanlog.blog";
 
 export interface SitemapPost {
   slug: string;

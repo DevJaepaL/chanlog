@@ -8,7 +8,7 @@ import { createLandingMetadata } from "@/lib/metadata";
 export const metadata = createLandingMetadata({
   title: "포트폴리오",
   description: "이재찬의 백엔드·AI 엔지니어 경력, 프로젝트, 기술 역량",
-  url: "https://chanlog.blog/portfolio",
+  url: "https://www.chanlog.blog/portfolio",
 });
 
 export default function PortfolioPage() {
