@@ -8,10 +8,10 @@ describe("sitemap entries", () => {
       "2026-08-21"
     );
     expect(entries).toEqual([
-      { url: "https://chanlog.blog", lastModified: "2026-08-21" },
-      { url: "https://chanlog.blog/portfolio", lastModified: "2026-08-21" },
+      { url: "https://www.chanlog.blog", lastModified: "2026-08-21" },
+      { url: "https://www.chanlog.blog/portfolio", lastModified: "2026-08-21" },
       {
-        url: "https://chanlog.blog/posts/my-first-post",
+        url: "https://www.chanlog.blog/posts/my-first-post",
         lastModified: "2023-12-06",
       },
     ]);

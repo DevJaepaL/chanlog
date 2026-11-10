@@ -10,13 +10,13 @@ describe("landing page metadata", () => {
       name: "archive",
       title: "아카이브",
       description: "이재찬의 기술 블로그",
-      url: "https://chanlog.blog/",
+      url: "https://www.chanlog.blog/",
     },
     {
       name: "portfolio",
       title: "포트폴리오",
       description: "이재찬의 백엔드·AI 엔지니어 경력, 프로젝트, 기술 역량",
-      url: "https://chanlog.blog/portfolio",
+      url: "https://www.chanlog.blog/portfolio",
     },
   ])(
     "preserves the complete Open Graph contract for $name",
@@ -39,11 +39,11 @@ describe("landing page metadata", () => {
     expect(portfolioMetadata).toEqual({
       title: "포트폴리오",
       description: "이재찬의 백엔드·AI 엔지니어 경력, 프로젝트, 기술 역량",
-      alternates: { canonical: "https://chanlog.blog/portfolio" },
+      alternates: { canonical: "https://www.chanlog.blog/portfolio" },
       openGraph: {
         title: "포트폴리오",
         description: "이재찬의 백엔드·AI 엔지니어 경력, 프로젝트, 기술 역량",
-        url: "https://chanlog.blog/portfolio",
+        url: "https://www.chanlog.blog/portfolio",
         locale: "ko_KR",
         type: "website",
         siteName: "Chanlog",
@@ -56,7 +56,7 @@ describe("landing page metadata", () => {
       resolve("app/portfolio/page.tsx"),
       "utf8"
     );
-    expect(portfolioPage).toContain('url: "https://chanlog.blog/portfolio"');
+    expect(portfolioPage).toContain('url: "https://www.chanlog.blog/portfolio"');
     expect(portfolioPage).not.toContain("chanlog.blog/pipeline");
     expect(existsSync(resolve("app/pipeline/page.tsx"))).toBe(false);
   });

@@ -7,7 +7,7 @@ import { toArchivePost } from "@/lib/posts";
 export const metadata = createLandingMetadata({
   title: "아카이브",
   description: "이재찬의 기술 블로그",
-  url: "https://chanlog.blog/",
+  url: "https://www.chanlog.blog/",
 });
 
 export default function Home() {
