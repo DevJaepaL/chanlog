@@ -75,6 +75,27 @@ export function getArchiveTagCounts<T extends ArchivePost>(
     );
 }
 
+export const ARCHIVE_VISIBLE_TAG_LIMIT = 5;
+
+type TagCount = { tag: string; count: number };
+
+export function splitArchiveTags(
+  tagCounts: readonly TagCount[],
+  selectedTag: string | null,
+  limit = ARCHIVE_VISIBLE_TAG_LIMIT
+): { visible: TagCount[]; hidden: TagCount[] } {
+  const ranked = [...tagCounts].sort((left, right) => right.count - left.count);
+  const visible = ranked.slice(0, limit);
+  const hidden = ranked.slice(limit);
+  const selectedIndex = hidden.findIndex(({ tag }) => tag === selectedTag);
+
+  if (selectedIndex >= 0) {
+    visible.push(...hidden.splice(selectedIndex, 1));
+  }
+
+  return { visible, hidden };
+}
+
 export function filterArchivePosts<T extends ArchivePost>(
   posts: readonly T[],
   selectedTag: string | null
@@ -118,4 +139,9 @@ export function getVisibleArchivePosts<T extends ArchivePost>(
   visibleCount: number
 ): T[] {
   return posts.slice(0, Math.max(visibleCount, 0));
+}
+
+export function formatPostDate(publishedAt: string): string {
+  const [year, month, day] = publishedAt.split("-").map(Number);
+  return `${year}년 ${month}월 ${day}일`;
 }

@@ -154,8 +154,8 @@ export function ProjectGallery({ previews }: { previews: ProjectPreview[] }) {
   }, [selectedPreview]);
 
   return (
-    <section className="mt-3" aria-label="구현 화면 예시">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+    <section className="mt-5" aria-label="구현 화면 예시">
+      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
         {previews.map((preview, index) => (
           <figure key={preview.label} className="min-w-0">
             {preview.src ? (
@@ -167,7 +167,7 @@ export function ProjectGallery({ previews }: { previews: ProjectPreview[] }) {
                 aria-label={`${preview.alt ?? preview.label} 확대 보기`}
                 aria-haspopup="dialog"
                 onClick={() => dispatch({ type: "open", index })}
-                className="group relative block aspect-video w-full overflow-hidden rounded-md bg-canvas-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-soft"
+                className="group relative block aspect-video w-full overflow-hidden rounded-lg bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-soft"
               >
                 <Image
                   loading="lazy"
@@ -183,7 +183,7 @@ export function ProjectGallery({ previews }: { previews: ProjectPreview[] }) {
                 </span>
               </button>
             ) : (
-              <div className="flex aspect-video items-center justify-center border border-dashed border-hairline bg-canvas-soft px-2 text-center text-caption text-ink-muted">
+              <div className="flex aspect-video items-center justify-center rounded-lg border border-dashed border-hairline bg-surface px-2 text-center text-caption text-ink-muted">
                 {preview.label} · 이미지 추가 예정
               </div>
             )}

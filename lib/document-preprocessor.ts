@@ -51,7 +51,6 @@ export interface DocumentPreprocessorDemo {
     field: "문서 제목";
     text: "2026년 7월 월간 수출입 현황 [확정치]";
   };
-  actions: { collapsed: string; expanded: string };
   source: string;
   image: { src: string; width: 1785; height: 2523; alt: string };
   regions: readonly DocumentRegion[];
@@ -71,7 +70,6 @@ export const documentPreprocessorDemo = {
     field: "문서 제목",
     text: "2026년 7월 월간 수출입 현황 [확정치]",
   },
-  actions: { collapsed: "구현 예시", expanded: "접기" },
   source:
     "출처: 관세청 「2026년 7월 월간 수출입 현황 [확정치]」, 2026. 8. 18., 1쪽",
   image: {

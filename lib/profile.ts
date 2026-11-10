@@ -20,7 +20,7 @@ export interface ProjectItem {
   experience: string[];
   skills: string[];
   previews?: ProjectPreview[];
-  detail?: "rpa-ocr-pipeline" | "document-preprocessor-pipeline";
+  detail?: "rpa-ocr-pipeline" | "document-preprocessor-pipeline" | "document-pipeline";
   logo?: {
     src: string;
     alt: string;
@@ -145,27 +145,7 @@ export const projects: ProjectItem[] = [
     },
   },
   {
-    title: "생성형 AI ChatBot & RAG · 문서 처리 솔루션",
-    org: "그리드원",
-    period: "2023.11 ~ 2025.04",
-    startedAt: "2023-11",
-    role: "PDF·DOCX·HWP 문서 구조 추출 및 전처리 초기 개발",
-    experience: [
-      "PDF·DOCX·HWP 문서의 제목·본문·표·그림을 구조 단위로 추출·전처리",
-      "문서 처리에 활용할 오픈소스와 오픈 모델을 연구·탐색",
-      "문서 전처리 초기 개발에 기여",
-    ],
-    skills: ["Python", "LangChain", "LangGraph", "RAG"],
-    detail: "document-preprocessor-pipeline",
-    logo: {
-      src: "/images/project-logos/gridone-logo.svg",
-      alt: "그리드원 로고",
-      width: 273,
-      height: 46,
-    },
-  },
-  {
-    title: "한국수자원공사 생성형 AI 서비스 시범사업 및 운영",
+    title: "한국수자원공사 생성형 AI 서비스 시범사업 구축 및 운영",
     org: "그리드원",
     client: "한국수자원공사",
     period: "2024.06 ~ 2025.05",
@@ -177,6 +157,7 @@ export const projects: ProjectItem[] = [
       "NoSQL 방식 DB 관리",
     ],
     skills: ["Python", "Docker", "Mongo DB", "RAG", "FastAPI"],
+    detail: "document-pipeline",
     previews: [
       {
         label: "메인 화면",
@@ -199,6 +180,26 @@ export const projects: ProjectItem[] = [
       alt: "한국수자원공사 K-water 로고",
       width: 2508,
       height: 1134,
+    },
+  },
+  {
+    title: "생성형 AI ChatBot & RAG · 문서 처리 솔루션",
+    org: "그리드원",
+    period: "2023.11 ~ 2025.04",
+    startedAt: "2023-11",
+    role: "PDF·DOCX·HWP 문서 구조 추출 및 전처리 초기 개발",
+    experience: [
+      "PDF·DOCX·HWP 문서의 제목·본문·표·그림을 구조 단위로 추출·전처리",
+      "문서 처리에 활용할 오픈소스와 오픈 모델을 연구·탐색",
+      "문서 전처리 초기 개발에 기여",
+    ],
+    skills: ["Python", "LangChain", "LangGraph", "RAG"],
+    detail: "document-preprocessor-pipeline",
+    logo: {
+      src: "/images/project-logos/gridone-logo.svg",
+      alt: "그리드원 로고",
+      width: 273,
+      height: 46,
     },
   },
   {

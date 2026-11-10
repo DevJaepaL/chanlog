@@ -8,7 +8,7 @@ import { MotionProvider } from "@/components/ui/motion-provider";
 
 const SITE_URL = "https://chanlog.blog";
 const SITE_TITLE = "CHANLOG | 기술 아카이브";
-const SITE_DESCRIPTION = "백엔드·AI·데이터 파이프라인에 관한 이재찬의 기술 아카이브.";
+const SITE_DESCRIPTION = "이재찬의 기술 블로그";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -60,7 +60,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="flex min-h-screen flex-col bg-canvas-soft text-ink antialiased">
+      <body className="flex min-h-screen flex-col bg-surface text-ink antialiased">
         <Navbar />
         <main className="flex-1">
           <MotionProvider>{children}</MotionProvider>

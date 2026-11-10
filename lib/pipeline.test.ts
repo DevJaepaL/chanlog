@@ -4,7 +4,6 @@ import {
   getPipelineState,
   pipelineStageGroups,
   pipelineStages,
-  getPipelineDetailPosition,
   reducePipelineState,
 } from "@/lib/pipeline";
 
@@ -133,14 +132,6 @@ describe("document parsing pipeline state", () => {
       description:
         "조문 번호와 고유 표기를 찾을 수 있도록 키워드 기반 색인을 구성합니다.",
     });
-  });
-
-  it("anchors edge store details inward for the active two-store row", () => {
-    expect(getPipelineDetailPosition(0, 2)).toBe("left");
-    expect(getPipelineDetailPosition(1, 2)).toBe("right");
-    expect(getPipelineDetailPosition(0, 3)).toBe("left");
-    expect(getPipelineDetailPosition(1, 3)).toBe("center");
-    expect(getPipelineDetailPosition(2, 3)).toBe("right");
   });
 
   it("clears transient hover without closing a focused target", () => {

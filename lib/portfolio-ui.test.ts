@@ -8,9 +8,27 @@ import { ProjectGallery } from "@/components/home/project-gallery";
 import * as galleryModule from "@/components/home/project-gallery";
 import * as rpaModule from "@/components/home/rpa-pipeline-disclosure";
 import { PipelineDiagram } from "@/components/portfolio/pipeline-diagram";
+import { AboutTabs } from "@/components/portfolio/about-tabs";
 import PortfolioPage from "@/app/portfolio/page";
+import { SkillGroups } from "@/components/home/skill-groups";
+import { profile, projects, careers, skillGroups } from "@/lib/profile";
 
 describe("portfolio UI", () => {
+  it("preserves every original project, career, skill and introduction entry", () => {
+    const markup = renderToStaticMarkup(createElement("main", null,
+      createElement(About), createElement(ProjectList),
+      createElement(CareerTimeline), createElement(SkillGroups)));
+    const escaped = (value: string) => renderToStaticMarkup(createElement("span", null, value)).slice(6, -7);
+    const originalText = [profile.about.greeting, ...profile.about.summaries.flat(),
+      ...projects.flatMap(project => [project.title, project.org, project.period, project.role, ...project.experience, ...project.skills]),
+      ...careers.flatMap(career => [career.company, career.period, career.summary, ...career.highlights]),
+      ...skillGroups.flatMap(group => [group.category, ...group.items])];
+    for (const text of originalText) expect(markup).toContain(escaped(text));
+    expect(projects).toHaveLength(5);
+    expect(markup).toContain('id="rpa-pipeline-panel"');
+    expect(markup).toContain('id="document-preprocessor"');
+    expect(markup.match(/aria-haspopup="dialog"/g)).toHaveLength(6);
+  });
   it("renders About and Career as independent, non-nested sections", () => {
     const aboutMarkup = renderToStaticMarkup(createElement(About));
     const careerMarkup = renderToStaticMarkup(createElement(CareerTimeline));
@@ -34,11 +52,9 @@ describe("portfolio UI", () => {
       "안녕하세요.<br/>서버 개발 및 LLM &amp; RAG 관련 개발 업무를 진행해온 만 3년차 개발자 이재찬입니다."
     );
     expect(aboutMarkup.match(/<li/g)).toHaveLength(3);
-    expect(aboutMarkup).toMatch(
-      /<ol[^>]*class="[^"]*mx-auto[^"]*w-full[^"]*max-w-2xl[^"]*"/
-    );
+    expect(aboutMarkup).toMatch(/<ol[^>]*class="[^"]*w-full[^"]*flex-col[^"]*"/);
     expect(
-      [...aboutMarkup.matchAll(/<span class="block">([^<]+)<\/span>/g)].map(
+      [...aboutMarkup.matchAll(/<span class="sm:block">([^<]+)<\/span>/g)].map(
         ([, line]) => line
       )
     ).toEqual([
@@ -67,16 +83,16 @@ describe("portfolio UI", () => {
     );
   });
 
-  it("renders CareerTimeline directly after About on PortfolioPage", () => {
+  it("puts all projects after the introduction and before career and skills", () => {
     const page = PortfolioPage();
     const children = Children.toArray(page.props.children);
 
     expect(children).toHaveLength(5);
     expect(isValidElement(children[1]) && children[1].type).toBe(About);
     expect(isValidElement(children[2]) && children[2].type).toBe(
-      CareerTimeline
+      ProjectList
     );
-    expect(isValidElement(children[3]) && children[3].type).toBe(ProjectList);
+    expect(isValidElement(children[3]) && children[3].type).toBe(CareerTimeline);
   });
 
   it("keeps four local organization marks to the left of project titles and omits B은행's logo", () => {
@@ -101,7 +117,7 @@ describe("portfolio UI", () => {
     );
     expect(markup).toContain("농식품 팜맵 서비스 개선");
     expect(markup).toContain(
-      "한국수자원공사 생성형 AI 서비스 시범사업 및 운영"
+      "한국수자원공사 생성형 AI 서비스 시범사업 구축 및 운영"
     );
     expect(markup).toContain("B은행 생성형 AI 서비스 실증사업");
     expect(markup).toContain("그리드원 · B은행");
@@ -109,8 +125,8 @@ describe("portfolio UI", () => {
 
     const projectTitles = [
       "농식품 팜맵 서비스 개선",
+      "한국수자원공사 생성형 AI 서비스 시범사업 구축 및 운영",
       "생성형 AI ChatBot &amp; RAG · 문서 처리 솔루션",
-      "한국수자원공사 생성형 AI 서비스 시범사업 및 운영",
       "신한카드 RPA 운영 고도화 프로젝트",
       "B은행 생성형 AI 서비스 실증사업",
     ];
@@ -124,7 +140,7 @@ describe("portfolio UI", () => {
       ["/images/project-logos/epis-ci.png", "농식품 팜맵 서비스 개선"],
       [
         "/images/project-logos/k-water-ci.png",
-        "한국수자원공사 생성형 AI 서비스 시범사업 및 운영",
+        "한국수자원공사 생성형 AI 서비스 시범사업 구축 및 운영",
       ],
       [
         "/images/project-logos/gridone-logo.svg",
@@ -139,7 +155,7 @@ describe("portfolio UI", () => {
     expect(markup).toMatch(/<ul[^>]*class="[^"]*list-disc[^"]*"/);
     const firstProject = markup.slice(
       markup.indexOf("농식품 팜맵 서비스 개선"),
-      markup.indexOf("한국수자원공사 생성형 AI 서비스 시범사업 및 운영")
+      markup.indexOf("한국수자원공사 생성형 AI 서비스 시범사업 구축 및 운영")
     );
 
     expect(firstProject).toMatch(
@@ -155,16 +171,17 @@ describe("portfolio UI", () => {
 
     const documentProject = markup.slice(
       markup.indexOf("생성형 AI ChatBot &amp; RAG · 문서 처리 솔루션"),
-      markup.indexOf("한국수자원공사 생성형 AI 서비스 시범사업 및 운영")
+      markup.indexOf("신한카드 RPA 운영 고도화 프로젝트")
     );
     expect(documentProject).toContain("Document Extractor · Preprocessor");
-    expect(documentProject).toContain("문서 전처리 파이프라인");
-    expect(documentProject).toContain('aria-expanded="false"');
+    expect(documentProject).not.toContain("문서 전처리 파이프라인");
+    expect(documentProject).toContain('id="document-preprocessor-panel"');
 
     const waterProject = markup.slice(
-      markup.indexOf("한국수자원공사 생성형 AI 서비스 시범사업 및 운영"),
-      markup.indexOf("B은행 생성형 AI 서비스 실증사업")
+      markup.indexOf("한국수자원공사 생성형 AI 서비스 시범사업 구축 및 운영"),
+      markup.indexOf("생성형 AI ChatBot &amp; RAG · 문서 처리 솔루션")
     );
+    expect(waterProject).toContain("문서 전처리 파이프라인");
     expect(waterProject).toContain(
       "url=%2Fimages%2Fproject-previews%2Fk-water-01.webp"
     );
@@ -175,17 +192,21 @@ describe("portfolio UI", () => {
     expect(markup).toContain("RPA 이미지 처리 파이프라인");
   });
 
-  it("keeps the document deep-link anchor and heading hierarchy inside the renamed project card", () => {
+  it("keeps the document demo anchor in the ChatBot card and the pipeline in the K-water card", () => {
     const markup = renderToStaticMarkup(createElement(ProjectList));
     const documentProject = markup.slice(
-      markup.indexOf("농식품 팜맵 서비스 개선"),
-      markup.indexOf("한국수자원공사 생성형 AI 서비스 시범사업 및 운영")
+      markup.indexOf("생성형 AI ChatBot &amp; RAG · 문서 처리 솔루션"),
+      markup.indexOf("신한카드 RPA 운영 고도화 프로젝트")
     );
 
     expect(markup.match(/id="document-preprocessor"/g)).toHaveLength(1);
     expect(documentProject).toContain('id="document-preprocessor"');
-    expect(documentProject).toMatch(
-      /<h3[^>]*>생성형 AI ChatBot &amp; RAG · 문서 처리 솔루션<\/h3>[\s\S]*?<h4[^>]*>Document Extractor · Preprocessor<\/h4>[\s\S]*?<h4 id="pipeline-heading"/
+    expect(markup).toMatch(
+      /<h3[^>]*>생성형 AI ChatBot &amp; RAG · 문서 처리 솔루션<\/h3>[\s\S]*?<h4[^>]*>Document Extractor · Preprocessor<\/h4>[\s\S]*?신한카드 RPA 운영 고도화 프로젝트/
+    );
+    expect(markup.match(/id="pipeline-heading"/g)).toHaveLength(1);
+    expect(markup).toMatch(
+      /<h3[^>]*>한국수자원공사 생성형 AI 서비스 시범사업 구축 및 운영<\/h3>[\s\S]*?<h4 id="pipeline-heading"[\s\S]*?<h3[^>]*>생성형 AI ChatBot &amp; RAG/
     );
     expect(markup).not.toContain("주요 구현 성과");
     expect(markup).not.toContain(">Experience<");
@@ -199,21 +220,22 @@ describe("portfolio UI", () => {
     );
     const documentProject = markup.slice(
       markup.indexOf("생성형 AI ChatBot &amp; RAG · 문서 처리 솔루션"),
-      markup.indexOf("한국수자원공사 생성형 AI 서비스 시범사업 및 운영")
+      markup.indexOf("신한카드 RPA 운영 고도화 프로젝트")
     );
 
     expect(rpaProject).not.toContain("파이프라인 보기");
-    expect(rpaProject).not.toContain(">접기<");
-    expect(rpaProject).not.toContain("aria-expanded");
+    // Projects now collapse as a whole (About accordion); the pipeline itself has no extra toggle
+    // and stays in the server markup while its project is collapsed.
+    expect(rpaProject.match(/aria-expanded=/g)).toHaveLength(1);
     expect(rpaProject).toContain('id="rpa-pipeline-panel"');
     expect(rpaProject).toContain('id="rpa-pipeline-heading"');
     expect(rpaProject).toContain("RPA 이미지 처리 파이프라인");
     expect(rpaProject).toMatch(
       /BPR 서버[\s\S]*Java 스케줄러[\s\S]*이미지 다운로드[\s\S]*RPA Cloud 전달[\s\S]*OCR MSA/
     );
-    expect(documentProject).toMatch(
-      /<button[^>]*class="[^"]*min-h-11[^"]*focus-visible:ring-2[^"]*"[^>]*>[\s\S]*?<span[^>]*class="[^"]*h-8[^"]*px-3[^"]*text-caption[^"]*"[^>]*>구현 예시<\/span><\/button>/
-    );
+    // The document demo is always visible (no 구현 예시 toggle).
+    expect(documentProject).not.toContain("구현 예시");
+    expect(documentProject).toContain('id="document-preprocessor-panel"');
   });
 
   it("renders gallery images without visible per-image captions while retaining accessible names", () => {
@@ -322,7 +344,41 @@ describe("portfolio UI", () => {
     expect(reducer(closed, { type: "close" })).toBe(closed);
   });
 
-  it("renders the five-stage RPA flow with one visible connector for each handoff", () => {
+  it("collapses each project to its summary while keeping every detail in the markup", () => {
+    const markup = renderToStaticMarkup(createElement(ProjectList));
+    const toggles = [
+      ...markup.matchAll(/<button[^>]*aria-expanded="false"[^>]*aria-controls="(project-\d+-detail)"[^>]*aria-labelledby="(project-\d+-title)"/g),
+    ];
+
+    expect(toggles).toHaveLength(projects.length);
+    for (const [, detailId, titleId] of toggles) {
+      expect(markup).toMatch(new RegExp(`<h3 id="${titleId}"`));
+      expect(markup).toMatch(new RegExp(`<div id="${detailId}"[^>]*hidden=""`));
+    }
+    expect(markup).toContain(">모두 펼치기<");
+    // Summary keeps title and skills visible; role and duties live in the collapsed detail.
+    expect(markup).toMatch(/<h3 id="project-0-title"[\s\S]*?사용 기술[\s\S]*?<div id="project-0-detail"[^>]*hidden=""[^>]*>[\s\S]*?역할/);
+  });
+
+  it("lets every About section collapse from its heading button", () => {
+    const markup = renderToStaticMarkup(createElement(CareerTimeline));
+    expect(markup).toMatch(
+      /<h2[^>]*><button type="button" aria-expanded="true" aria-controls="career-content"[^>]*>[\s\S]*?경력/
+    );
+    expect(markup).toMatch(/<div id="career-content"/);
+    expect(markup).not.toMatch(/<div id="career-content"[^>]*hidden/);
+  });
+
+  it("offers sticky jump tabs for each About section", () => {
+    const markup = renderToStaticMarkup(createElement(AboutTabs));
+    expect(markup).toContain('aria-label="About 섹션 바로가기"');
+    expect(
+      [...markup.matchAll(/href="#([a-z]+)"/g)].map(([, id]) => id)
+    ).toEqual(["about", "projects", "career", "skills"]);
+    expect(markup).toContain("sticky");
+  });
+
+  it("renders the five-stage RPA run with one connector for each handoff", () => {
     const Flow = (
       rpaModule as typeof rpaModule & {
         RpaPipelineFlow?: () => JSX.Element;
@@ -335,13 +391,13 @@ describe("portfolio UI", () => {
     const markup = renderToStaticMarkup(createElement(Flow));
     expect(markup).toContain('aria-label="RPA 이미지 처리 흐름"');
     expect(markup).toContain('aria-labelledby="rpa-development-area"');
-    expect(markup.match(/stroke-width="2"/g)).toHaveLength(8);
     expect(markup).toMatch(
       /BPR 서버[\s\S]*Java 스케줄러[\s\S]*이미지 다운로드[\s\S]*RPA Cloud 전달[\s\S]*OCR MSA/
     );
+    expectRunScreen(markup, 5);
   });
 
-  it("keeps collapsed parsing context useful while its preview waits for the full panel", () => {
+  it("shows every document stage with its title, extractor and store chips inside the run screen", () => {
     const markup = renderToStaticMarkup(createElement(PipelineDiagram));
 
     expect(markup).toContain("문서 전처리 파이프라인");
@@ -351,73 +407,48 @@ describe("portfolio UI", () => {
       /<fieldset[^>]*class="[^"]*border-2[^"]*border-dashed[^"]*border-primary/
     );
     expect(markup).toContain('aria-label="문서 형식별 Extractor"');
+    expect(markup).toContain('aria-label="연동 저장소"');
     expect(markup).not.toContain(">담당<");
     expect(markup).not.toContain(">연동<");
-    expect(markup).toContain("NiFi");
-    expect(markup).toContain("문서 데이터 추출");
-    expect(markup).toContain("전처리기");
-    expect(markup).toContain("지식 DB 색인·저장");
-    expect(markup).toContain("LLM 모델의 응답 처리");
-    expect(markup).toContain("HWP");
-    expect(markup).toContain("PDF");
-    expect(markup).toContain("DOCX");
-    expect(markup).toContain("BM25");
-    expect(markup).toContain("MongoDB");
+    for (const text of [
+      "NiFi",
+      "문서 데이터 추출",
+      "전처리기",
+      "지식 DB 색인·저장",
+      "LLM 모델의 응답 처리",
+      "HWP",
+      "PDF",
+      "DOCX",
+      "BM25",
+      "MongoDB",
+      // Stage titles are now visible on each card (run-screen redesign).
+      "데이터 수집 스케줄링",
+      "근거 기반 응답 생성",
+    ]) {
+      expect(markup).toContain(text);
+    }
+    expect(markup).not.toContain("Chroma");
     const storeButtons = [
-      ...markup.matchAll(
-        /<button[^>]*class="[^"]*inline-flex[^"]*"[^>]*>([\s\S]*?)<\/button>/g
-      ),
+      ...markup.matchAll(/<button[^>]*>([\s\S]*?)<\/button>/g),
     ].filter(([, button]) =>
-      ["BM25", "MongoDB"].some((store) => button.includes(`>${store}</span>`))
+      ["BM25", "MongoDB"].some((store) => button.includes(`<span>${store}</span>`))
     );
     expect(storeButtons).toHaveLength(2);
-    for (const [store, button] of ["BM25", "MongoDB"].map(
-      (store, index) => [store, storeButtons[index][1]] as const
-    )) {
-      expect(button).toContain(`<svg`);
-      expect(button).toContain(`>${store}</span>`);
-      expect(button).toContain("text-[0.6875rem]");
-    }
+    for (const [, button] of storeButtons) expect(button).toContain("<svg");
     expect(markup).not.toContain("aria-pressed");
-    expect(markup).toMatch(
-      /<button[^>]*class="[^"]*text-center[^"]*"[^>]*>[\s\S]*?<span[^>]*>NiFi<\/span>/
-    );
-    expect(markup).not.toContain("데이터 수집 스케줄링");
-    expect(markup).not.toContain(
-      "일정에 따라 문서를 수집하고 전처리 작업을 시작합니다."
-    );
-  });
-
-  it("renders four sequential animated RPA connector overlays", () => {
-    const Flow = (
-      rpaModule as typeof rpaModule & { RpaPipelineFlow?: () => JSX.Element }
-    ).RpaPipelineFlow;
-    expect(Flow).toBeTypeOf("function");
-    if (!Flow) return;
-
-    const markup = renderToStaticMarkup(createElement(Flow));
-    expect(
-      [...markup.matchAll(/data-flow-step="(\d)"/g)].map(([, step]) => step)
-    ).toEqual(["0", "1", "2", "3"]);
-    expect(
-      [...markup.matchAll(/data-flow-delay="(\d+ms)"/g)].map(
-        ([, delay]) => delay
-      )
-    ).toEqual(["0ms", "120ms", "240ms", "360ms"]);
-    expect(markup.match(/pipeline-flow-path stroke-primary/g)).toHaveLength(8);
-  });
-
-  it("renders four sequential animated document-pipeline connector overlays", () => {
-    const markup = renderToStaticMarkup(createElement(PipelineDiagram));
-
-    expect(
-      [...markup.matchAll(/data-flow-step="(\d)"/g)].map(([, step]) => step)
-    ).toEqual(["0", "1", "2", "3"]);
-    expect(
-      [...markup.matchAll(/data-flow-delay="(\d+ms)"/g)].map(
-        ([, delay]) => delay
-      )
-    ).toEqual(["0ms", "120ms", "240ms", "360ms"]);
-    expect(markup.match(/pipeline-flow-path stroke-primary/g)).toHaveLength(7);
+    expectRunScreen(markup, 5);
   });
 });
+
+// "실행 화면형": one status per step, connectors between steps, and a step board with controls.
+function expectRunScreen(markup: string, steps: number) {
+  const statuses = [...markup.matchAll(/data-step-status="(\w+)"/g)].map(([, status]) => status);
+  expect(statuses).toEqual(["running", ...Array(steps - 1).fill("waiting")]);
+  expect(markup.match(/data-connector="/g)).toHaveLength(steps - 1);
+  for (const label of ["이전 단계", "일시정지", "다음 단계"]) {
+    expect(markup).toContain(`aria-label="${label}"`);
+  }
+  expect(markup).toContain(`01/${String(steps).padStart(2, "0")} · 처리 중`);
+  expect(markup).not.toContain("pipeline-packet");
+  expect(markup).not.toContain("--flow-at");
+}

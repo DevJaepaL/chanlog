@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { contacts } from "@/lib/profile";
 import {
   getActiveNavHref,
-  getHeaderActionAttributes,
-  getHeaderContacts,
+  getContactLinkAttributes,
+  getProfileContacts,
   NAV_ITEMS,
 } from "@/lib/navigation";
 
@@ -24,21 +24,26 @@ describe("navigation contracts", () => {
     expect(getActiveNavHref("/missing")).toBeUndefined();
   });
 
-  it("selects Contact then GitHub from shared contacts only", () => {
-    expect(getHeaderContacts(contacts)).toEqual([
-      contacts.find((contact) => contact.label === "Contact"),
+  it("orders profile contacts GitHub, Instagram, then Contact from shared contacts only", () => {
+    expect(getProfileContacts(contacts)).toEqual([
       contacts.find((contact) => contact.label === "GitHub"),
+      contacts.find((contact) => contact.label === "Instagram"),
+      contacts.find((contact) => contact.label === "Contact"),
     ]);
   });
 
-  it("gives Contact same-window mail and GitHub safe new-window semantics", () => {
-    const [contact, github] = getHeaderContacts(contacts);
+  it("gives Contact same-window mail and external links safe new-window semantics", () => {
+    const external = getProfileContacts(contacts).slice(0, 2);
+    const contact = getProfileContacts(contacts)[2];
     expect(contact.href).toMatch(/^mailto:/);
-    expect(getHeaderActionAttributes(contact)).toEqual({});
-    expect(github.href).toMatch(/^https:\/\//);
-    expect(getHeaderActionAttributes(github)).toEqual({
-      target: "_blank",
-      rel: "noopener noreferrer",
-    });
+    expect(getContactLinkAttributes(contact)).toEqual({});
+    expect(external).toHaveLength(2);
+    for (const link of external) {
+      expect(link.href).toMatch(/^https:\/\//);
+      expect(getContactLinkAttributes(link)).toEqual({
+        target: "_blank",
+        rel: "noopener noreferrer",
+      });
+    }
   });
 });
