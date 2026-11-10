@@ -8,18 +8,19 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: { DEFAULT: "#0075de", active: "#005bab" },
+        primary: { DEFAULT: "#0075de", active: "#005bab", soft: "#e8f2fc" },
         secondary: "#213183",
         chrome: "#172554",
-        canvas: { DEFAULT: "#ffffff", soft: "#f6f5f4" },
+        canvas: { DEFAULT: "#ffffff", soft: "#f9fafb", muted: "#f2f4f6" },
         surface: "#ffffff",
         ink: {
-          DEFAULT: "#000000",
-          secondary: "#31302e",
-          muted: "#615d59",
-          faint: "#a39e98",
+          DEFAULT: "#191f28",
+          secondary: "#333d4b",
+          tertiary: "#4e5968",
+          muted: "#6b7684",
+          faint: "#8b95a1",
         },
-        hairline: "#e6e6e6",
+        hairline: "#e5e8eb",
         accent: {
           sky: "#62aef0",
           purple: "#d6b6f6",
@@ -46,11 +47,15 @@ module.exports = {
         "heading-1": ["40px", { lineHeight: "1.1", letterSpacing: "-1px", fontWeight: "700" }],
         "heading-2": ["26px", { lineHeight: "1.23", letterSpacing: "-0.625px", fontWeight: "700" }],
         "heading-3": ["22px", { lineHeight: "1.27", letterSpacing: "-0.25px", fontWeight: "700" }],
+        headline: ["32px", { lineHeight: "1.35", letterSpacing: "-0.6px", fontWeight: "700" }],
+        section: ["24px", { lineHeight: "1.4", letterSpacing: "-0.4px", fontWeight: "700" }],
         title: ["20px", { lineHeight: "1.4", letterSpacing: "-0.125px", fontWeight: "600" }],
+        "body-lg": ["17px", { lineHeight: "1.75", letterSpacing: "0" }],
         "body-md": ["16px", { lineHeight: "1.5", letterSpacing: "0" }],
         "body-sm": ["15px", { lineHeight: "1.33", letterSpacing: "0" }],
         button: ["16px", { lineHeight: "1.5", letterSpacing: "0", fontWeight: "500" }],
         caption: ["14px", { lineHeight: "1.43", letterSpacing: "0" }],
+        label: ["13px", { lineHeight: "1.4", letterSpacing: "0", fontWeight: "600" }],
         eyebrow: ["12px", { lineHeight: "1.33", letterSpacing: "0.125px", fontWeight: "600" }],
       },
       borderRadius: {
@@ -59,6 +64,7 @@ module.exports = {
         md: "8px",
         lg: "12px",
         xl: "16px",
+        "2xl": "24px",
       },
       boxShadow: {
         soft: "0 0.175px 1.041px rgba(0,0,0,0.01), 0 0.8px 2.925px rgba(0,0,0,0.02), 0 2.025px 7.847px rgba(0,0,0,0.027), 0 4px 18px rgba(0,0,0,0.04)",

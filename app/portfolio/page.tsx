@@ -16,8 +16,8 @@ export default function PortfolioPage() {
     <>
       <Hero />
       <About />
-      <CareerTimeline />
       <ProjectList />
+      <CareerTimeline />
       <SkillGroups />
     </>
   );

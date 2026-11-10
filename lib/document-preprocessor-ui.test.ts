@@ -29,7 +29,7 @@ function renderOpenPanel(state = getOpenPanelState()) {
 }
 
 describe("DocumentPreprocessorDetail", () => {
-  it("renders the collapsed project-card detail from the shared demo contract", () => {
+  it("always shows the demo panel in the project-card detail without a toggle", () => {
     const markup = renderToStaticMarkup(
       createElement(DocumentPreprocessorDetail)
     );
@@ -38,10 +38,11 @@ describe("DocumentPreprocessorDetail", () => {
     expect(markup).toContain(
       "PDF·DOCX·HWP등 처리가 복잡한 공공기관 문서의 제목·본문·표·그림등을 문맥에 맞는 구조 단위로 효율적으로 분리했습니다."
     );
-    expect(markup).toContain("구현 예시");
-    expect(markup).toContain('aria-expanded="false"');
-    expect(markup).toContain('aria-controls="document-preprocessor-panel"');
-    expect(markup).not.toContain('id="document-preprocessor-panel"');
+    expect(markup).toContain('id="document-preprocessor-panel"');
+    expect(markup).toContain("원본 1쪽");
+    expect(markup).toContain("구조 결과");
+    expect(markup).not.toContain("구현 예시");
+    expect(markup).not.toContain("aria-expanded");
     expect(markup).not.toContain("주요 구현 성과");
     expect(markup).not.toContain(">Experience<");
     expect(markup).not.toContain("추출 결과 예시");

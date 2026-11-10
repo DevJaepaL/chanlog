@@ -5,33 +5,21 @@ export function About() {
   const { greeting, summaries } = profile.about;
 
   return (
-    <Section id="about" eyebrow="About" title="소개">
-      <p className="mb-4 break-keep text-body-md text-ink-secondary">
+    <Section id="about" eyebrow="About" title="소개" wide collapsible>
+      <p className="mb-5 break-keep text-title font-semibold leading-relaxed text-ink sm:text-heading-3 sm:font-semibold">
         안녕하세요.
         <br />
         {greeting}
       </p>
-      <ol className="mx-auto flex w-full max-w-2xl flex-col gap-2">
-        {summaries.map(([firstLine, secondLine], index) => (
+      <ol className="flex w-full flex-col gap-3">
+        {summaries.map(([firstLine, secondLine]) => (
           <li
             key={firstLine}
-            className="flex items-stretch rounded-md border border-hairline bg-surface px-4 py-3"
+            className="rounded-xl bg-canvas-soft px-5 py-4 sm:px-6 sm:py-5"
           >
-            <span
-              aria-hidden="true"
-              className="flex w-9 shrink-0 items-center text-eyebrow text-ink-muted"
-            >
-              {(index + 1).toString().padStart(2, "0")}
-            </span>
-            <span
-              aria-hidden="true"
-              className="mr-4 w-px shrink-0 bg-hairline"
-            />
-            <p className="flex min-h-11 min-w-0 items-center break-keep text-body-md text-ink-secondary">
-              <span>
-                <span className="block">{firstLine}</span>
-                <span className="block">{secondLine}</span>
-              </span>
+            <p className="break-keep text-body-md text-ink-secondary sm:text-body-lg">
+              <span className="sm:block">{firstLine}</span>{" "}
+              <span className="sm:block">{secondLine}</span>
             </p>
           </li>
         ))}

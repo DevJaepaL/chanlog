@@ -36,10 +36,8 @@ describe("documentPreprocessorDemo", () => {
     expect(documentPreprocessorDemo.description).toBe(
       "PDF·DOCX·HWP등 처리가 복잡한 공공기관 문서의 제목·본문·표·그림등을 문맥에 맞는 구조 단위로 효율적으로 분리했습니다."
     );
-    expect(documentPreprocessorDemo.actions).toEqual({
-      collapsed: "구현 예시",
-      expanded: "접기",
-    });
+    // The demo is always shown, so it no longer has 구현 예시/접기 toggle labels.
+    expect(documentPreprocessorDemo).not.toHaveProperty("actions");
     expect(documentPreprocessorDemo.source).toBe(
       "출처: 관세청 「2026년 7월 월간 수출입 현황 [확정치]」, 2026. 8. 18., 1쪽"
     );

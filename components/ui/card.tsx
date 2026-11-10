@@ -11,7 +11,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`rounded-lg border border-hairline bg-surface p-6 ${
+      className={`rounded-2xl bg-canvas-soft p-5 sm:p-9 ${
         elevated ? "shadow-soft" : ""
       } ${className}`}
     >

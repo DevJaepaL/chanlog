@@ -13,16 +13,6 @@ export type PipelineItemId =
 
 export type PipelineTone = "orange" | "teal" | "purple" | "sky" | "pink";
 export type PipelineStageGroup = "owned" | "integrated";
-export type PipelineDetailPosition = "left" | "center" | "right";
-
-export function getPipelineDetailPosition(
-  index: number,
-  count: number
-): PipelineDetailPosition {
-  if (index === 0) return "left";
-  if (index === count - 1) return "right";
-  return "center";
-}
 
 export interface PipelineTarget {
   id: PipelineItemId;

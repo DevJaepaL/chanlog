@@ -9,6 +9,7 @@ import {
   normalizePostTags,
   normalizeThumbnail,
   sortPostsByPublishedAt,
+  splitArchiveTags,
   toArchivePost,
 } from "@/lib/posts";
 
@@ -187,5 +188,31 @@ describe("archive post helpers", () => {
     expect(getVisibleArchivePosts(posts, secondVisibleCount)).toHaveLength(12);
     expect(getVisibleArchivePosts(posts, finalVisibleCount)).toHaveLength(13);
     expect(getInitialArchiveVisibleCount(8)).toBe(6);
+  });
+});
+
+describe("splitArchiveTags", () => {
+  const counts = [
+    { tag: "A", count: 1 },
+    { tag: "B", count: 3 },
+    { tag: "C", count: 1 },
+    { tag: "D", count: 2 },
+    { tag: "E", count: 1 },
+  ];
+
+  it("shows the most-used tags first, keeping name order for ties", () => {
+    const { visible, hidden } = splitArchiveTags(counts, null, 3);
+    expect(visible.map(({ tag }) => tag)).toEqual(["B", "D", "A"]);
+    expect(hidden.map(({ tag }) => tag)).toEqual(["C", "E"]);
+  });
+
+  it("keeps a selected hidden tag visible", () => {
+    const { visible, hidden } = splitArchiveTags(counts, "E", 3);
+    expect(visible.map(({ tag }) => tag)).toEqual(["B", "D", "A", "E"]);
+    expect(hidden.map(({ tag }) => tag)).toEqual(["C"]);
+  });
+
+  it("hides nothing when every tag fits", () => {
+    expect(splitArchiveTags(counts, null, 5).hidden).toEqual([]);
   });
 });

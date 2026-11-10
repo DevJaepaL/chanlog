@@ -35,8 +35,8 @@ describe("profile 데이터", () => {
   it("프로젝트는 포트폴리오 서사에 맞춘 공개 순서를 유지한다", () => {
     expect(projects.map((project) => project.title)).toEqual([
       "농식품 팜맵 서비스 개선",
+      "한국수자원공사 생성형 AI 서비스 시범사업 구축 및 운영",
       "생성형 AI ChatBot & RAG · 문서 처리 솔루션",
-      "한국수자원공사 생성형 AI 서비스 시범사업 및 운영",
       "신한카드 RPA 운영 고도화 프로젝트",
       "B은행 생성형 AI 서비스 실증사업",
     ]);
@@ -76,6 +76,7 @@ describe("profile 데이터", () => {
         height: 457,
       },
     ]);
+    expect(kWaterProject?.detail).toBe("document-pipeline");
     expect(kWaterProject?.previews).toEqual([
       {
         label: "메인 화면",
